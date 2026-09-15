@@ -19,5 +19,11 @@ export async function installAutoSuggestion(): Promise<void> {
     const bleshFilePath = path.join(temporaryDirectoryPath, "ble-nightly", "ble.sh");
     await execAsync(`bash ${bleshFilePath} --install ${localShareDirectoryPath}`);
     await fs.rm(temporaryDirectoryPath, { recursive: true });
+    const assetsDirectoryPath = path.join(import.meta.dirname, "assets");
+    const blercFilePath = path.join(assetsDirectoryPath, ".blerc");
+    const homeDirectoryPath = os.homedir();
+    const homeBlercFilePath = path.join(homeDirectoryPath, ".blerc");
+    await fs.copyFile(blercFilePath, homeBlercFilePath);
+    console.log(await fs.readdir(homeDirectoryPath));
     console.log("installed auto suggestion");
 }
