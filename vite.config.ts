@@ -15,6 +15,7 @@ const configuration = defineConfig({
     },
     pack: {
         entry: "./source/setup-ubuntu.ts",
+        deps: { alwaysBundle: "@commander-js/extra-typings" },
         outDir: "distribution",
         copy: [],
     },
