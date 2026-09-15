@@ -1,4 +1,6 @@
 #!/usr/bin/env node
 import { program } from "@commander-js/extra-typings";
-program.name("setup-ubuntu").version("0.0.0").description("TODO")
-program.parse()
+import { name, version } from "../package.json";
+
+program.name(name).version(version).description("TODO");
+program.parse();

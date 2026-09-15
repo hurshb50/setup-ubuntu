@@ -13,33 +13,33 @@ CI uses npm's OIDC trusted publishing and staged publishing. No npm token. Nothi
 
 1. Push the repo to GitHub. Run `gh auth login` first if needed.
 
-   ```bash
-   git init -b main
-   git add .
-   git commit -m "Initial commit"
-   gh repo create setup-ubuntu --public --source . --remote origin --push
-   ```
+    ```bash
+    git init -b main
+    git add .
+    git commit -m "Initial commit"
+    gh repo create setup-ubuntu --public --source . --remote origin --push
+    ```
 
 2. Log in to npm.
 
-   ```bash
-   vp pm login
-   ```
+    ```bash
+    vp pm login
+    ```
 
 3. Publish the first version manually. npm cannot stage a new package.
 
-   ```bash
-   vp pm publish
-   ```
+    ```bash
+    vp pm publish
+    ```
 
-   This publishes 0.0.0. Later releases go through CI.
+    This publishes 0.0.0. Later releases go through CI.
 
 4. Allow GitHub Actions to publish. In the package settings on npmjs.com, add a GitHub Actions trusted publisher.
 
-   - Organization or user: `hurshb50`
-   - Repository: `setup-ubuntu`
-   - Workflow filename: `publish.yaml`
-   - Allowed actions: staged publishing only
+    - Organization or user: `hurshb50`
+    - Repository: `setup-ubuntu`
+    - Workflow filename: `publish.yaml`
+    - Allowed actions: staged publishing only
 
 5. Optional: in package settings under Publishing access, set "Require two-factor authentication and disallow tokens". CI still works through OIDC.
 
