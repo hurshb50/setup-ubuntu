@@ -8,6 +8,7 @@ RUN vp run build && vp pm pack
 
 FROM ubuntu:24.04 AS ubuntu
 SHELL ["/bin/bash", "-c"]
+ENV SHELL=/bin/bash
 RUN useradd -m -s /bin/bash user
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \

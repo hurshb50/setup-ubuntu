@@ -7,14 +7,18 @@ import { installTerminalView } from "./terminal-view";
 import { installFonts } from "./fonts";
 import { installFuzzyFinder } from "./fuzzy-finder";
 import { installAutoSuggestion } from "./auto-suggestion";
+import { installSmartChangeDirectory } from "./smart-change-directory";
+import { installCodeEditor } from "./code-editor";
 
 program
     .name(name)
     .version(version)
     .description("TODO")
     .action(async () => {
-        await updateSystemPackageManager();
-        await installAutoSuggestion();
+        // await updateSystemPackageManager();
+        await installCodeEditor();
+        // await installSmartChangeDirectory();
+        // await installAutoSuggestion();
         // await installFuzzyFinder();
         // await installFonts();
         // await installVersionControlSystem();

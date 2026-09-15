@@ -24,6 +24,5 @@ export async function installAutoSuggestion(): Promise<void> {
     const homeDirectoryPath = os.homedir();
     const homeBlercFilePath = path.join(homeDirectoryPath, ".blerc");
     await fs.copyFile(blercFilePath, homeBlercFilePath);
-    console.log(await fs.readdir(homeDirectoryPath));
     console.log("installed auto suggestion");
 }

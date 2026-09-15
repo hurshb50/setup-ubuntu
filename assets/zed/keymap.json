@@ -1,0 +1,124 @@
+[
+    {
+        "context": "Editor",
+        "bindings": {
+            "g r n": null,
+            "d ]": null,
+            "d [": null,
+            "g shift-k": null,
+            "ctrl-f": null
+        }
+    },
+    {
+        "context": "Editor",
+        "bindings": {
+            "ctrl-w v": null,
+            "ctrl-w s": null,
+            "ctrl-w q": null,
+            "ctrl-w a": null,
+            "ctrl-w o": null
+        }
+    },
+    {
+        "bindings": {
+            "ctrl-h": "workspace::ActivatePaneLeft",
+            "ctrl-j": "workspace::ActivatePaneDown",
+            "ctrl-k": "workspace::ActivatePaneUp",
+            "ctrl-l": "workspace::ActivatePaneRight"
+        }
+    },
+    {
+        "context": "VimControl && !menu",
+        "bindings": {
+            "ctrl-w h": null,
+            "ctrl-w j": null,
+            "ctrl-w k": null,
+            "ctrl-w l": null
+        }
+    },
+    {
+        "context": "Workspace",
+        "bindings": {
+            "ctrl-s": null,
+            "ctrl-shift-w": null,
+            "ctrl-shift-t": null,
+            "ctrl-?": null,
+            "ctrl-~": null,
+            "ctrl-shift-e": null,
+            "ctrl-shift-g": null,
+            "ctrl-shift-f": null,
+            "ctrl-shift-o": null,
+            "ctrl-b": null,
+            "ctrl-alt-b": null
+        }
+    },
+    {
+        "context": "FileFinder || (FileFinder > Picker > Editor)",
+        "bindings": {
+            "ctrl-p": null
+        }
+    },
+    {
+        "context": "AgentPanel",
+        "bindings": {
+            "ctrl-n": null
+        }
+    },
+    {
+        "context": "Terminal",
+        "bindings": {
+            "ctrl-p": ["terminal::SendKeystroke", "ctrl-p"],
+            "ctrl-n": ["terminal::SendKeystroke", "ctrl-n"]
+        }
+    },
+    {
+        "context": "GitPanel",
+        "bindings": {
+            "p": "git::Push",
+            "l": "git::Pull",
+            "b": "git::Switch",
+            "c": "git::Commit",
+            "m": "git::GenerateCommitMessage",
+            "ctrl-j": "git_panel::FocusEditor",
+            "ctrl-k": "git_panel::FocusChanges"
+        }
+    },
+    {
+        "context": "ThreadsSidebar",
+        "bindings": {
+            "/": null
+        }
+    },
+    {
+        "context": "ThreadsSidebar > Editor",
+        "bindings": {
+            "ctrl-j": "menu::Cancel",
+            "ctrl-k": "menu::Cancel",
+            "ctrl-h": "menu::Cancel",
+            "ctrl-l": "menu::Cancel",
+            "j": "menu::Cancel",
+            "k": "menu::Cancel",
+            "h": "menu::Cancel",
+            "l": "menu::Cancel"
+        }
+    },
+    {
+        "context": "CommitEditor > Editor",
+        "bindings": {
+            "m": "git::GenerateCommitMessage",
+            "ctrl-k": "git_panel::FocusChanges"
+        }
+    },
+    {
+        "context": "GitPanel > Editor",
+        "bindings": {
+            "ctrl-k": "git_panel::FocusChanges"
+        }
+    },
+    {
+        "context": "vim_mode == visual && !menu",
+        "bindings": {
+            "shift-s": "vim::PushAddSurrounds"
+        }
+    }
+]
