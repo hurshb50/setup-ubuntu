@@ -9,14 +9,16 @@ import { installFuzzyFinder } from "./fuzzy-finder";
 import { installAutoSuggestion } from "./auto-suggestion";
 import { installSmartChangeDirectory } from "./smart-change-directory";
 import { installCodeEditor } from "./code-editor";
+import { installBrowser } from "./browser";
 
 program
     .name(name)
     .version(version)
     .description("TODO")
     .action(async () => {
-        // await updateSystemPackageManager();
-        await installCodeEditor();
+        await updateSystemPackageManager();
+        await installBrowser();
+        // await installCodeEditor();
         // await installSmartChangeDirectory();
         // await installAutoSuggestion();
         // await installFuzzyFinder();
