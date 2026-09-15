@@ -8,8 +8,7 @@ program
     .version(version)
     .description("TODO")
     .action(() => {
-        console.log("Hello world");
-        // installGit();
+        installGit();
     });
 
 program.parse();
