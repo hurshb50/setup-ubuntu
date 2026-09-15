@@ -10,12 +10,13 @@ FROM ubuntu:24.04 AS ubuntu
 SHELL ["/bin/bash", "-c"]
 RUN useradd -m user
 WORKDIR /home/user
-COPY --from=build /build/*.tgz ./package.tgz
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl ca-certificates && \
-    curl -fsSL https://vite.plus | bash && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends curl ca-certificates
+RUN curl -fsSL https://vite.plus | bash
+RUN rm -rf /var/lib/apt/lists/*
 
 ENV PATH="/root/.local/share/vite-plus/bin:${PATH}"
+
+COPY --from=build /build/*.tgz ./package.tgz
 
 CMD [ "vpx", "./package.tgz" ]
