@@ -5,7 +5,7 @@
     "files": [
         "distribution"
     ],
-    "bin": "./distribution/setup-ubuntu.js",
+    "bin": "./distribution/setup-ubuntu.mjs",
     "scripts": {
         "build": "vp pack",
         "check": "vp check",
