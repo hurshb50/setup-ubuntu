@@ -1,0 +1,22 @@
+bleopt highlight_syntax=
+bleopt highlight_filename=
+bleopt highlight_variable=
+
+ble-face -s auto_complete fg=245
+
+ble-bind -m auto_complete -f 'C-RET' 'auto_complete/insert'
+
+set -o vi
+
+function blerc/vim-mode-hook {
+    bleopt keymap_vi_mode_show=
+    ble-bind -m vi_nmap --cursor 2
+    ble-bind -m vi_imap --cursor 6
+    ble-bind -m vi_imap -f 'C-p' 'history-search backward:ignore-case'
+    ble-bind -m vi_imap -f 'C-n' 'history-search forward:ignore-case'
+    ble-bind -m vi_nmap -f 'C-p' 'history-search backward:ignore-case'
+    ble-bind -m vi_nmap -f 'C-n' 'history-search forward:ignore-case'
+}
+
+blehook/eval-after-load keymap_vi blerc/vim-mode-hook
+bleopt prompt_command_changes_layout=1
