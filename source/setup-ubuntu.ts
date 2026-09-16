@@ -10,6 +10,7 @@ import { installAutoSuggestion } from "./auto-suggestion";
 import { installSmartChangeDirectory } from "./smart-change-directory";
 import { installCodeEditor } from "./code-editor";
 import { installBrowser } from "./browser";
+import { installPasswordManager } from "./password-manager";
 
 program
     .name(name)
@@ -17,7 +18,8 @@ program
     .description("TODO")
     .action(async () => {
         await updateSystemPackageManager();
-        await installBrowser();
+        await installPasswordManager();
+        // await installBrowser();
         // await installCodeEditor();
         // await installSmartChangeDirectory();
         // await installAutoSuggestion();
