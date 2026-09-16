@@ -2,7 +2,6 @@
     {
         "context": "Editor",
         "bindings": {
-            "g r n": null,
             "d ]": null,
             "d [": null,
             "g shift-k": null,
