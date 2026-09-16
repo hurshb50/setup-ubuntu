@@ -1,6 +1,6 @@
 ---
 name: teach
-description: Teach me a concept from the ground up, starting from what I already know.
+description: Teach me a concept from the ground up, assuming no prior knowledge and no context.
 disable-model-invocation: true
 ---
 
@@ -10,9 +10,13 @@ Any concept, in one sitting, from the ground up.
 
 ## Before you start
 
-Ask what I already know about this, unless I already told you.
+Assume I know nothing about this and have no context. Do not ask what I already know.
 
-Start at the first thing I do not already know. Teach that, then add one step at a time.
+Define every term the first time it appears, including ones that seem basic. Say what problem the concept solves and what it replaces.
+
+Do not refer to anything I have not been shown. No other files, no earlier conversations, no shared setup.
+
+Start at the beginning. Teach the first idea, then add one step at a time.
 
 ## The lesson
 
