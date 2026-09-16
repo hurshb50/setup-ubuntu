@@ -1,32 +1,43 @@
 #!/usr/bin/env node
 import { program } from "@commander-js/extra-typings";
 import { name, version } from "../package.json";
-import { installVersionControlSystem } from "./version-control-system";
-import { updateSystemPackageManager } from "./system-package-manager";
-import { installTerminalView } from "./terminal-view";
-import { installFonts } from "./fonts";
-import { installFuzzyFinder } from "./fuzzy-finder";
-import { installAutoSuggestion } from "./auto-suggestion";
-import { installSmartChangeDirectory } from "./smart-change-directory";
-import { installCodeEditor } from "./code-editor";
-import { installBrowser } from "./browser";
-import { installPasswordManager } from "./password-manager";
+import { installVersionControlSystem } from "./modules/version-control-system";
+import { updateSystemPackageManager } from "./modules/system-package-manager";
+import { installContainerEngine } from "./modules/container-engine";
+import { installTerminalView } from "./modules/terminal-view";
+import { installFonts } from "./modules/fonts";
+import { installFuzzyFinder } from "./modules/fuzzy-finder";
+import { installAutoSuggestion } from "./modules/auto-suggestion";
+import { installSmartChangeDirectory } from "./modules/smart-change-directory";
+import { installCodeEditor } from "./modules/code-editor";
+import { installBrowser } from "./modules/browser";
+import { installPasswordManager } from "./modules/password-manager";
+import { installWallpapers } from "./modules/wallpapers";
+import { installAgentRules } from "./modules/agent-rules";
+import { installAgentSkills } from "./modules/agent-skills";
+import { installShellConfiguration } from "./modules/shell-configuration";
 
 program
     .name(name)
     .version(version)
     .description("TODO")
     .action(async () => {
+        await installShellConfiguration();
+        await installAgentSkills();
+        await installAgentRules();
+
         await updateSystemPackageManager();
+        await installContainerEngine();
+        await installWallpapers();
         await installPasswordManager();
-        // await installBrowser();
-        // await installCodeEditor();
-        // await installSmartChangeDirectory();
-        // await installAutoSuggestion();
-        // await installFuzzyFinder();
-        // await installFonts();
-        // await installVersionControlSystem();
-        // await installTerminalView();
+        await installBrowser();
+        await installCodeEditor();
+        await installSmartChangeDirectory();
+        await installAutoSuggestion();
+        await installFuzzyFinder();
+        await installFonts();
+        await installVersionControlSystem();
+        await installTerminalView();
     });
 
 program.parse();
