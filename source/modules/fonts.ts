@@ -12,6 +12,5 @@ export async function installFonts(): Promise<void> {
     if (systemFontsDirectoryPathDoesNotExist) await fs.mkdir(systemFontsDirectoryPath);
 
     await fs.cp(fontsDirectoryPath, systemFontsDirectoryPath, { recursive: true });
-    console.log(await fs.readdir(systemFontsDirectoryPath, { recursive: true, withFileTypes: true }));
     console.log("installed fonts");
 }

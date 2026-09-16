@@ -22,22 +22,21 @@ program
     .version(version)
     .description("TODO")
     .action(async () => {
-        await installShellConfiguration();
-        await installAgentSkills();
-        await installAgentRules();
-
         await updateSystemPackageManager();
-        await installContainerEngine();
-        await installWallpapers();
-        await installPasswordManager();
+        await installAgentRules();
+        await installAgentSkills();
+        await installAutoSuggestion();
         await installBrowser();
         await installCodeEditor();
-        await installSmartChangeDirectory();
-        await installAutoSuggestion();
+        await installContainerEngine();
         await installFuzzyFinder();
         await installFonts();
-        await installVersionControlSystem();
+        await installPasswordManager();
+        await installShellConfiguration();
+        await installSmartChangeDirectory();
         await installTerminalView();
+        await installVersionControlSystem();
+        await installWallpapers();
     });
 
 program.parse();
