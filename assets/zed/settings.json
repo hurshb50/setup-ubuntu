@@ -11,22 +11,8 @@
             "minimal": {
                 "name": "Minimal",
                 "tools": {
-                    "copy_path": false,
-                    "create_directory": false,
-                    "delete_path": false,
-                    "diagnostics": false,
-                    "edit_file": false,
                     "fetch": true,
-                    "find_path": false,
-                    "grep": false,
-                    "list_directory": false,
-                    "move_path": false,
-                    "read_file": false,
-                    "search_web": true,
-                    "skill": false,
-                    "spawn_agent": false,
-                    "terminal": false,
-                    "write_file": false
+                    "search_web": true
                 }
             },
             "ask": {
@@ -78,26 +64,6 @@
             "model": "deepseek-v4-flash",
             "enable_thinking": false,
             "effort": null
-        },
-        "tool_permissions": {
-            "tools": {
-                "copy_path": { "default": "allow" },
-                "create_directory": { "default": "allow" },
-                "delete_path": { "default": "allow" },
-                "diagnostics": { "default": "allow" },
-                "edit_file": { "default": "allow" },
-                "fetch": { "default": "allow" },
-                "find_path": { "default": "allow" },
-                "grep": { "default": "allow" },
-                "list_directory": { "default": "allow" },
-                "move_path": { "default": "allow" },
-                "read_file": { "default": "allow" },
-                "search_web": { "default": "allow" },
-                "skill": { "default": "allow" },
-                "spawn_agent": { "default": "allow" },
-                "terminal": { "default": "allow" },
-                "write_file": { "default": "allow" }
-            }
         }
     },
     "buffer_font_family": "Comic Code Ligatures",
