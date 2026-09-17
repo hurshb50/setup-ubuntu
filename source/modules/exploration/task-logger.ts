@@ -13,11 +13,11 @@ export class TaskLogger {
         this.maxWidth = maxWidth;
     }
 
-    registerTask(partialTask: Pick<Task, "name" | "header">): crypto.UUID {
+    registerTask(header: string): crypto.UUID {
         const taskId = crypto.randomUUID();
 
         const task: Task = {
-            ...partialTask,
+            header,
             status: "idle",
             row: this.tasks.size,
             step: undefined,
@@ -33,7 +33,7 @@ export class TaskLogger {
         if (task === undefined) throw new Error(`Task with id '${taskId}' does not exist.`);
 
         if (task.status !== "idle") {
-            throw new Error(`Cannot start task state '${task.name}' when status is ${task.status}.`);
+            throw new Error(`Cannot start task state when status is ${task.status}.`);
         }
 
         task.status = "in-progress";
@@ -45,7 +45,7 @@ export class TaskLogger {
         if (task === undefined) throw new Error(`Task with id '${taskId}' does not exist.`);
 
         if (task.status !== "in-progress") {
-            throw new Error(`Cannot fail task state '${task.name}' when status is ${task.status}.`);
+            throw new Error(`Cannot fail task state when status is ${task.status}.`);
         }
 
         task.status = "failed";
@@ -57,7 +57,7 @@ export class TaskLogger {
         if (task === undefined) throw new Error(`Task with id '${taskId}' does not exist.`);
 
         if (task.status !== "in-progress") {
-            throw new Error(`Cannot finish task state '${task.name}' when status is ${task.status}.`);
+            throw new Error(`Cannot finish task state when status is ${task.status}.`);
         }
 
         task.step = undefined;
@@ -70,7 +70,7 @@ export class TaskLogger {
         if (task === undefined) throw new Error(`Task with id '${taskId}' does not exist.`);
 
         if (task.status !== "in-progress") {
-            throw new Error(`Cannot update step for task state '${task.name}' when status is ${task.status}.`);
+            throw new Error(`Cannot update step for task state when status is ${task.status}.`);
         }
 
         task.step = step;
@@ -142,7 +142,6 @@ export class TaskLogger {
 
 interface Task {
     status: "idle" | "in-progress" | "done" | "failed";
-    name: string;
     header: string;
     row: number;
     step?: string;
