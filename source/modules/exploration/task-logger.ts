@@ -4,11 +4,13 @@ export class TaskLogger {
     tasks: Map<crypto.UUID, Task>;
     timeout?: NodeJS.Timeout;
     spinnerFrame: number;
+    maxWidth: number;
 
-    constructor() {
+    constructor(maxWidth: number) {
         this.tasks = new Map();
         this.timeout = undefined;
         this.spinnerFrame = 0;
+        this.maxWidth = maxWidth;
     }
 
     registerTask(partialTask: Pick<Task, "name" | "header">): crypto.UUID {
@@ -35,6 +37,18 @@ export class TaskLogger {
         }
 
         task.status = "in-progress";
+    }
+
+    failTask(taskId: crypto.UUID): void {
+        const task = this.tasks.get(taskId);
+
+        if (task === undefined) throw new Error(`Task with id '${taskId}' does not exist.`);
+
+        if (task.status !== "in-progress") {
+            throw new Error(`Cannot fail task state '${task.name}' when status is ${task.status}.`);
+        }
+
+        task.status = "failed";
     }
 
     finishTask(taskId: crypto.UUID): void {
@@ -91,6 +105,9 @@ export class TaskLogger {
         const padding = (size = 1) => " ".repeat(size - 1);
         const check = "✔";
         const dot = dots[this.spinnerFrame];
+        const yellow = "\x1b[33m";
+        const green = "\x1b[32m";
+        const red = "\x1b[31m";
 
         if (dot === undefined) {
             throw new Error(`Invalid index '${this.spinnerFrame}' to access dots of length '${dots.length}'.`);
@@ -98,6 +115,7 @@ export class TaskLogger {
 
         for (const task of tasks) {
             this.log(start);
+            this.log(task.status === "done" ? green : task.status === "failed" ? red : yellow);
             this.log(clear);
             this.log(padding(2));
 
@@ -107,7 +125,10 @@ export class TaskLogger {
 
             this.log(padding(2));
             this.log(task.header);
-            this.log(padding(10));
+
+            const leftPaddingSize = 2 + 2 + 2 + task.header.length;
+            const rightPaddingSize = this.maxWidth - leftPaddingSize - (task.step?.length ?? 0);
+            this.log(padding(rightPaddingSize));
 
             if (task.step) this.log(task.step);
 
@@ -120,7 +141,7 @@ export class TaskLogger {
 }
 
 interface Task {
-    status: "idle" | "in-progress" | "done";
+    status: "idle" | "in-progress" | "done" | "failed";
     name: string;
     header: string;
     row: number;

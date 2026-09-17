@@ -16,14 +16,14 @@ import { name, version } from "../package.json";
 // import { installAgentRules } from "./modules/agent-rules";
 // import { installAgentSkills } from "./modules/agent-skills";
 // import { installShellConfiguration } from "./modules/shell-configuration";
-import { TaskLogger } from "./modules/process/task-logger";
+import { TaskLogger } from "./modules/exploration/task-logger";
 
 program
     .name(name)
     .version(version)
     .description("TODO")
     .action(async () => {
-        const logger = new TaskLogger();
+        const logger = new TaskLogger(80);
 
         const taskAId = logger.registerTask({ name: "Example A", header: "Install Example A" });
         const taskBId = logger.registerTask({ name: "Example B", header: "Install Example B" });
