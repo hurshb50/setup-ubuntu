@@ -1,6 +1,8 @@
+import type { TaskLogger } from "./task-logger";
+
 export interface Package {
     systemDependencyNames?: string[];
     systemName?: string;
-    setupSystemSources?: () => void;
-    postSystemInstall?: () => Promise<void>;
+    setupSystemSources?: () => Promise<void>;
+    postSystemInstall: (taskLogger: TaskLogger) => Promise<void>;
 }

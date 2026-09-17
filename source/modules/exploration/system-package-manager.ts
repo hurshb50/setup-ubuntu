@@ -1,31 +1,26 @@
 import childProcess from "node:child_process";
+import type { Package } from "./package";
 import type { TaskLogger } from "./task-logger";
 
-/**
- * Need the following:
- * - prequisite package installs
- * - package sources
- * - update
- * - install packages
- */
-class SystemPackageManager {
-    systemPackages: SystemPackage[];
+export class SystemPackageManager {
+    packages: Package[];
     taskLogger: TaskLogger;
 
-    constructor(systemPackages: SystemPackage[], taskLogger: TaskLogger) {
-        this.systemPackages = systemPackages;
+    constructor(packages: Package[], taskLogger: TaskLogger) {
+        this.packages = packages;
         this.taskLogger = taskLogger;
     }
 
     installPrequisites(): void {
-        const dependencies: string[] = [];
-        const taskId = this.taskLogger.registerTask("Install Prerequisite System Dependencies");
+        const taskId = this.taskLogger.registerTask("Install System Dependencies");
         this.taskLogger.startTask(taskId);
 
         try {
-            for (const systemPackage of this.systemPackages) dependencies.push(...systemPackage.dependencies);
-
-            const installCommand = `sudo apt-get install ${dependencies.join(" ")}`;
+            const systemDependencyNames = this.packages.flatMap(
+                ({ systemDependencyNames }) => systemDependencyNames ?? [],
+            );
+            
+            const installCommand = `sudo apt-get install --yes --no-install-recommends ${systemDependencyNames.join(" ")}`;
             childProcess.execSync(installCommand);
             this.taskLogger.finishTask(taskId);
         } catch {
@@ -33,13 +28,25 @@ class SystemPackageManager {
         }
     }
 
-    setupSources(): void {
+    async setupSources(): Promise<void> {
         const taskId = this.taskLogger.registerTask("Setup System Sources");
         this.taskLogger.startTask(taskId);
 
         try {
-            for (const systemPackage of this.systemPackages) systemPackage.setupSources();
+            for (const systemPackage of this.packages) await systemPackage.setupSystemSources?.();
 
+            this.taskLogger.finishTask(taskId);
+        } catch {
+            this.taskLogger.failTask(taskId);
+        }
+    }
+
+    updateSystemPackageManager(): void {
+        const taskId = this.taskLogger.registerTask("Update System Package Manager");
+        this.taskLogger.startTask(taskId);
+
+        try {
+            childProcess.execSync("sudo DEBIAN_FRONTEND=noninteractive apt-get update --yes");
             this.taskLogger.finishTask(taskId);
         } catch {
             this.taskLogger.failTask(taskId);
@@ -47,12 +54,12 @@ class SystemPackageManager {
     }
 
     installPackages(): void {
-        const packageNames = this.systemPackages.map(({ name }) => name);
         const taskId = this.taskLogger.registerTask("Install System Packages");
         this.taskLogger.startTask(taskId);
 
         try {
-            const installCommand = `sudo apt-get install ${packageNames.join(" ")}`;
+            const systemNames = this.packages.flatMap(({ systemName }) => systemName ?? []);
+            const installCommand = `sudo apt-get install --yes --no-install-recommends ${systemNames.join(" ")}`;
             childProcess.execSync(installCommand);
             this.taskLogger.finishTask(taskId);
         } catch {
@@ -60,23 +67,11 @@ class SystemPackageManager {
         }
     }
 
-    async postInstall(): Promise<void> {
-        const taskId = this.taskLogger.registerTask("Post Install System Packages");
-        this.taskLogger.startTask(taskId);
+    async postSystemInstall(): Promise<void> {
+        const postSystemInstallCalls = this.packages.map((systemPackage) =>
+            systemPackage.postSystemInstall(this.taskLogger),
+        );
 
-        try {
-            const postInstallCalls = this.systemPackages.map(({ postInstall }) => postInstall());
-            await Promise.all(postInstallCalls);
-            this.taskLogger.finishTask(taskId);
-        } catch {
-            this.taskLogger.failTask(taskId);
-        }
+        await Promise.all(postSystemInstallCalls);
     }
-}
-
-interface SystemPackage {
-    dependencies: string[]; // sometimes not defined
-    name: string; // sometimes not defined
-    setupSources: () => void; // sometimes not defined
-    postInstall: () => Promise<void>; // sometimes not defined
 }

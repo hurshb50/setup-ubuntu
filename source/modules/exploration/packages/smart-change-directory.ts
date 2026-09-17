@@ -1,7 +1,18 @@
-import { execAsync } from "./exec-async";
+import type { Package } from "../package";
+import type { TaskLogger } from "../task-logger";
+import { execAsync } from "../../exec-async";
 
-export async function installSmartChangeDirectory(): Promise<void> {
-    console.log("installing smart change directory");
-    await execAsync("curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh");
-    console.log("installed smart change directory");
+export class SmartChangeDirectory implements Package {
+    async postSystemInstall(taskLogger: TaskLogger): Promise<void> {
+        const taskId = taskLogger.registerTask("Setup Smart Change Directory");
+
+        try {
+            taskLogger.startTask(taskId);
+            taskLogger.updateTaskStep(taskId, "Install zoxide");
+            await execAsync("curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh");
+            taskLogger.finishTask(taskId);
+        } catch {
+            taskLogger.failTask(taskId);
+        }
+    }
 }

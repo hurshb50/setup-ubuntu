@@ -1,7 +1,17 @@
-import { execAsync } from "./exec-async";
+import type { Package } from "../package";
+import type { TaskLogger } from "../task-logger";
 
-export async function installFuzzyFinder(): Promise<void> {
-    console.log("installing fuzzy finder");
-    await execAsync("sudo apt-get install -y --no-install-recommends fzf");
-    console.log("installed fuzzy finder");
+export class FuzzyFinder implements Package {
+    systemName = "fzf";
+
+    async postSystemInstall(taskLogger: TaskLogger): Promise<void> {
+        const taskId = taskLogger.registerTask("Setup Fuzzy Finder");
+
+        try {
+            taskLogger.startTask(taskId);
+            taskLogger.finishTask(taskId);
+        } catch {
+            taskLogger.failTask(taskId);
+        }
+    }
 }

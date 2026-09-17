@@ -1,8 +1,20 @@
-import { execAsync } from "./exec-async";
+import type { Package } from "../package";
+import type { TaskLogger } from "../task-logger";
+import { execAsync } from "../../exec-async";
 
-export async function installTerminalView(): Promise<void> {
-    console.log("Installing terminal view");
-    await execAsync("sudo apt-get install -y --no-install-recommends unzip");
-    await execAsync("curl -s https://ohmyposh.dev/install.sh | bash -s");
-    console.log("Installed terminal view");
+export class TerminalView implements Package {
+    systemDependencyNames = ["unzip"];
+
+    async postSystemInstall(taskLogger: TaskLogger): Promise<void> {
+        const taskId = taskLogger.registerTask("Setup Terminal View");
+
+        try {
+            taskLogger.startTask(taskId);
+            taskLogger.updateTaskStep(taskId, "Install oh-my-posh");
+            await execAsync("curl -s https://ohmyposh.dev/install.sh | bash -s");
+            taskLogger.finishTask(taskId);
+        } catch {
+            taskLogger.failTask(taskId);
+        }
+    }
 }

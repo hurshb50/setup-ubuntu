@@ -1,28 +1,46 @@
-import path from "path";
-import os from "os";
 import fs from "fs/promises";
-import { execAsync } from "./exec-async";
+import os from "os";
+import path from "path";
+import type { Package } from "../package";
+import type { TaskLogger } from "../task-logger";
+import { execAsync } from "../../exec-async";
 
-export async function installAutoSuggestion(): Promise<void> {
-    console.log("installing auto suggestion");
-    await execAsync(`sudo apt-get install -y --no-install-recommends xz-utils`);
+export class AutoSuggestion implements Package {
+    systemDependencyNames = ["xz-utils"];
 
-    const systemTemporaryDirectoryPath = os.tmpdir();
-    const temporaryDirectoryPathPrefix = path.join(systemTemporaryDirectoryPath, "ble.sh");
-    const temporaryDirectoryPath = await fs.mkdtemp(temporaryDirectoryPathPrefix);
+    async postSystemInstall(taskLogger: TaskLogger): Promise<void> {
+        const taskId = taskLogger.registerTask("Setup Auto Suggestion");
 
-    await execAsync(
-        `curl -L https://github.com/akinomyoga/ble.sh/releases/download/nightly/ble-nightly.tar.xz | tar xJf - -C ${temporaryDirectoryPath}`,
-    );
+        try {
+            taskLogger.startTask(taskId);
 
-    const localShareDirectoryPath = path.join(os.homedir(), ".local", "share");
-    const bleshFilePath = path.join(temporaryDirectoryPath, "ble-nightly", "ble.sh");
-    await execAsync(`bash ${bleshFilePath} --install ${localShareDirectoryPath}`);
-    await fs.rm(temporaryDirectoryPath, { recursive: true });
-    const assetsDirectoryPath = path.join(import.meta.dirname, "assets");
-    const blercFilePath = path.join(assetsDirectoryPath, ".blerc");
-    const homeDirectoryPath = os.homedir();
-    const homeBlercFilePath = path.join(homeDirectoryPath, ".blerc");
-    await fs.copyFile(blercFilePath, homeBlercFilePath);
-    console.log("installed auto suggestion");
+            const systemTemporaryDirectoryPath = os.tmpdir();
+            const temporaryDirectoryPathPrefix = path.join(systemTemporaryDirectoryPath, "ble.sh");
+            const temporaryDirectoryPath = await fs.mkdtemp(temporaryDirectoryPathPrefix);
+            const localShareDirectoryPath = path.join(os.homedir(), ".local", "share");
+            const bleshFilePath = path.join(temporaryDirectoryPath, "ble-nightly", "ble.sh");
+            const assetsDirectoryPath = path.join(import.meta.dirname, "assets");
+            const blercFilePath = path.join(assetsDirectoryPath, ".blerc");
+            const homeDirectoryPath = os.homedir();
+            const homeBlercFilePath = path.join(homeDirectoryPath, ".blerc");
+
+            taskLogger.updateTaskStep(taskId, "Download ble.sh");
+            await execAsync(
+                `curl -L https://github.com/akinomyoga/ble.sh/releases/download/nightly/ble-nightly.tar.xz | tar xJf - -C ${temporaryDirectoryPath}`,
+            );
+
+            taskLogger.updateTaskStep(taskId, "Install ble.sh");
+            await execAsync(`bash ${bleshFilePath} --install ${localShareDirectoryPath}`);
+
+            taskLogger.updateTaskStep(taskId, "Remove temporary directory");
+            await fs.rm(temporaryDirectoryPath, { recursive: true });
+
+            taskLogger.updateTaskStep(taskId, "Copy configuration");
+            await fs.copyFile(blercFilePath, homeBlercFilePath);
+
+            taskLogger.finishTask(taskId);
+        } catch {
+            taskLogger.failTask(taskId);
+        }
+    }
 }

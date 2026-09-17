@@ -1,16 +1,26 @@
-import path from "path";
 import fs from "fs/promises";
 import os from "os";
-import { existsSync } from "fs";
+import path from "path";
+import type { Package } from "../package";
+import type { TaskLogger } from "../task-logger";
 
-export async function installFonts(): Promise<void> {
-    console.log("installing fonts");
-    const fontsDirectoryPath = path.join(import.meta.dirname, "assets", "fonts");
-    const systemFontsDirectoryPath = path.join(os.homedir(), ".local", "share", "fonts");
-    const systemFontsDirectoryPathDoesNotExist = existsSync(systemFontsDirectoryPath) === false;
+export class Fonts implements Package {
+    systemDependencyNames = ["fontconfig"];
 
-    if (systemFontsDirectoryPathDoesNotExist) await fs.mkdir(systemFontsDirectoryPath);
+    async postSystemInstall(taskLogger: TaskLogger): Promise<void> {
+        const taskId = taskLogger.registerTask("Setup Fonts");
 
-    await fs.cp(fontsDirectoryPath, systemFontsDirectoryPath, { recursive: true });
-    console.log("installed fonts");
+        try {
+            taskLogger.startTask(taskId);
+            const fontsDirectoryPath = path.join(import.meta.dirname, "assets", "fonts");
+            const systemFontsDirectoryPath = path.join(os.homedir(), ".local", "share", "fonts");
+            taskLogger.updateTaskStep(taskId, "Create fonts directory");
+            await fs.mkdir(systemFontsDirectoryPath, { recursive: true });
+            taskLogger.updateTaskStep(taskId, "Copy fonts");
+            await fs.cp(fontsDirectoryPath, systemFontsDirectoryPath, { recursive: true });
+            taskLogger.finishTask(taskId);
+        } catch {
+            taskLogger.failTask(taskId);
+        }
+    }
 }
