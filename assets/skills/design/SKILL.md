@@ -44,7 +44,7 @@ Read what comes back before Phase 3. Throw away any design that does not address
 
 ## Phase 3. Choose together
 
-Present the designs one at a time.
+Present all the designs.
 
 For each design, show how a caller would use it: a code snippet or a diagram, whichever fits better.
 
