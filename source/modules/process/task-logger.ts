@@ -3,10 +3,12 @@ import crypto from "crypto";
 export class TaskLogger {
     tasks: Map<crypto.UUID, Task>;
     timeout?: NodeJS.Timeout;
+    spinnerFrame: number;
 
     constructor() {
         this.tasks = new Map();
         this.timeout = undefined;
+        this.spinnerFrame = 0;
     }
 
     registerTask(partialTask: Pick<Task, "name" | "header">): crypto.UUID {
@@ -70,7 +72,51 @@ export class TaskLogger {
         clearInterval(this.timeout);
     }
 
-    private printTasks(): void {}
+    log(message: string): void {
+        process.stdout.write(message);
+    }
+
+    private printTasks(): void {
+        const dots = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+
+        const tasks = this.tasks
+            .values()
+            .toArray()
+            .toSorted((taskA, taskB) => taskA.row - taskB.row);
+
+        const up = (rows = 1) => `\x1b[${rows}A`;
+        const start = "\r";
+        const clear = "\x1b[2K";
+        const newline = "\n";
+        const padding = (size = 1) => " ".repeat(size - 1);
+        const check = "✔";
+        const dot = dots[this.spinnerFrame];
+
+        if (dot === undefined) {
+            throw new Error(`Invalid index '${this.spinnerFrame}' to access dots of length '${dots.length}'.`);
+        }
+
+        for (const task of tasks) {
+            this.log(start);
+            this.log(clear);
+            this.log(padding(2));
+
+            if (task.status === "idle") this.log(padding(2));
+            else if (task.status === "in-progress") this.log(dot);
+            else this.log(check);
+
+            this.log(padding(2));
+            this.log(task.header);
+            this.log(padding(10));
+
+            if (task.step) this.log(task.step);
+
+            this.log(newline);
+        }
+
+        this.log(up(tasks.length));
+        this.spinnerFrame = (this.spinnerFrame + 1) % dots.length;
+    }
 }
 
 interface Task {
