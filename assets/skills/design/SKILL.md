@@ -44,6 +44,8 @@ Read what comes back before Phase 3. Throw away any design that does not address
 
 Present the designs one at a time.
 
+For each design, show how a caller would use it: a code snippet or a diagram, whichever fits better.
+
 Then ask me one round of numbered questions about what to keep, each with your recommendation. Do not pick a winner. I want to mix.
 
 Fold my answers into another round of Ideation. Keep going until I say we are done, then converge.
