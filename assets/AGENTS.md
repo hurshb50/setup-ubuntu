@@ -24,6 +24,14 @@ bullet whose lead-in restates its own line.
 
 Terse means fewer sentences, not broken ones. Keep the articles and the verbs.
 
+# Formatting
+
+Blank line between every paragraph, heading, list, and code block. A paragraph
+break is a full blank line, not just a wrap to the next line.
+
+Never let two prose paragraphs run together, and never butt a heading against the
+text above it. The whitespace is part of the answer, not decoration.
+
 # Explanation
 
 Show the code. Quote the lines that do the thing you are explaining, trimmed to

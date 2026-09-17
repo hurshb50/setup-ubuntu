@@ -18,7 +18,9 @@ Ask me about the decisions the design has to make.
 
 Some decisions depend on others. Ask the unblocked ones now and leave the rest for a later round.
 
-Put every unblocked question in one round, numbered, each with your recommended answer. Then stop and wait for mine.
+When a question lands better as an example than as prose, add one: a short snippet of a caller using each option, a sketch of the types, or a diagram of the flow. Keep it small and illustrative. This is not meant to represent the final design.
+
+Put every unblocked question in one round, numbered, each with your recommended answer and whatever example it needs. Then stop and wait for mine.
 
 Do not ask me for facts. Look them up, then ask me only what needs my judgement.
 
