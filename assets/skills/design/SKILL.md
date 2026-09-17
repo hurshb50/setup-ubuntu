@@ -46,9 +46,7 @@ Present the designs one at a time.
 
 For each design, show how a caller would use it: a code snippet or a diagram, whichever fits better.
 
-Then ask me one round of numbered questions about what to keep, each with your recommendation. Do not pick a winner. I want to mix.
-
-Fold my answers into another round of Ideation. Keep going until I say we are done, then converge.
+Then ask me for my feedback: what I like, what I do not like, and whether to run another round of Ideation or move on to Phase 4. Do not pick a winner.
 
 ## Phase 4. Converge
 
