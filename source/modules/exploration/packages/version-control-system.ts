@@ -11,7 +11,7 @@ export class VersionControlSystem implements Package {
         await context.dependencyManager.update();
 
         const dependencies = ["git", "build-essential"];
-        task.continue(`Install dependencies: ${dependencies.join(", ")}`);
+        task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
         await context.dependencyManager.install(dependencies);
 
         task.finish();

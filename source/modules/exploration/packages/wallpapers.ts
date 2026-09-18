@@ -13,7 +13,7 @@ export class Wallpapers implements Package {
         await context.dependencyManager.update();
 
         const dependencies = ["hydrapaper"];
-        task.continue(`Install dependencies: ${dependencies.join(", ")}`);
+        task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
         await context.dependencyManager.install(dependencies);
 
         task.continue("Create backgrounds directory");

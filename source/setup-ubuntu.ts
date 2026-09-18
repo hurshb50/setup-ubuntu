@@ -8,6 +8,7 @@ import type { Package } from "./modules/exploration/package";
 import { DependencyManager } from "./modules/exploration/dependency-manager";
 import { Wallpapers } from "./modules/exploration/packages/wallpapers";
 import { VersionControlSystem } from "./modules/exploration/packages/version-control-system";
+import { TerminalView } from "./modules/exploration/packages/terminal-view";
 
 program
     .name(name)
@@ -18,7 +19,7 @@ program
         const dependencyManager = new DependencyManager();
         logger.start();
 
-        const packages: Package[] = [new VersionControlSystem()];
+        const packages: Package[] = [new TerminalView(), new VersionControlSystem(), new Wallpapers()];
 
         try {
             const directories = {
