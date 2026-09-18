@@ -18,22 +18,18 @@ export class CodeEditor implements Package {
         logger.add(task);
         task.start();
 
-        try {
-            const assetsDirectoryPath = path.join(import.meta.dirname, "assets");
-            const zedDirectoryPath = path.join(assetsDirectoryPath, "zed");
-            const homeDirectoryPath = os.homedir();
-            const configurationDirectoryPath = path.join(homeDirectoryPath, ".config");
-            const configurationZedDirectoryPath = path.join(configurationDirectoryPath, "zed");
+        const assetsDirectoryPath = path.join(import.meta.dirname, "assets");
+        const zedDirectoryPath = path.join(assetsDirectoryPath, "zed");
+        const homeDirectoryPath = os.homedir();
+        const configurationDirectoryPath = path.join(homeDirectoryPath, ".config");
+        const configurationZedDirectoryPath = path.join(configurationDirectoryPath, "zed");
 
-            task.continue("Install Zed");
-            await execAsync("curl -f https://zed.dev/install.sh | sh");
+        task.continue("Install Zed");
+        await execAsync("curl -f https://zed.dev/install.sh | sh");
 
-            task.continue("Copy configuration");
-            await fs.cp(zedDirectoryPath, configurationZedDirectoryPath, { recursive: true });
+        task.continue("Copy configuration");
+        await fs.cp(zedDirectoryPath, configurationZedDirectoryPath, { recursive: true });
 
-            task.finish();
-        } catch (error) {
-            task.fail(error);
-        }
+        task.finish();
     }
 }

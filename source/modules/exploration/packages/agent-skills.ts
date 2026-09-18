@@ -11,21 +11,17 @@ export class AgentSkills implements Package {
         logger.add(task);
         task.start();
 
-        try {
-            const homeDirectoryPath = os.homedir();
-            const globalSkillsDirectoryPath = path.join(homeDirectoryPath, ".agents", "skills");
-            const assetsDirectoryPath = path.join(import.meta.dirname, "assets");
-            const skillsDirectoryPath = path.join(assetsDirectoryPath, "skills");
+        const homeDirectoryPath = os.homedir();
+        const globalSkillsDirectoryPath = path.join(homeDirectoryPath, ".agents", "skills");
+        const assetsDirectoryPath = path.join(import.meta.dirname, "assets");
+        const skillsDirectoryPath = path.join(assetsDirectoryPath, "skills");
 
-            task.continue("Create global skills directory");
-            await fs.mkdir(globalSkillsDirectoryPath, { recursive: true });
+        task.continue("Create global skills directory");
+        await fs.mkdir(globalSkillsDirectoryPath, { recursive: true });
 
-            task.continue("Copy agent skills");
-            await fs.cp(skillsDirectoryPath, globalSkillsDirectoryPath, { recursive: true });
+        task.continue("Copy agent skills");
+        await fs.cp(skillsDirectoryPath, globalSkillsDirectoryPath, { recursive: true });
 
-            task.finish();
-        } catch (error) {
-            task.fail(error);
-        }
+        task.finish();
     }
 }

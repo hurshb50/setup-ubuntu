@@ -9,12 +9,8 @@ export class SmartChangeDirectory implements Package {
         logger.add(task);
         task.start();
 
-        try {
-            task.continue("Install zoxide");
-            await execAsync("curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh");
-            task.finish();
-        } catch (error) {
-            task.fail(error);
-        }
+        task.continue("Install zoxide");
+        await execAsync("curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh");
+        task.finish();
     }
 }

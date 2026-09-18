@@ -23,12 +23,8 @@ export class ContainerEngine implements Package {
         logger.add(task);
         task.start();
 
-        try {
-            task.continue("Add user to docker group");
-            await execAsync(`sudo usermod --append --groups docker ${os.userInfo().username}`);
-            task.finish();
-        } catch (error) {
-            task.fail(error);
-        }
+        task.continue("Add user to docker group");
+        await execAsync(`sudo usermod --append --groups docker ${os.userInfo().username}`);
+        task.finish();
     }
 }

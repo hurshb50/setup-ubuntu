@@ -34,10 +34,6 @@ export class PasswordManager implements Package {
         logger.add(task);
         task.start();
 
-        try {
-            task.finish();
-        } catch (error) {
-            task.fail(error);
-        }
+        task.finish();
     }
 }

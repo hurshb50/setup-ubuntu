@@ -13,18 +13,14 @@ export class Wallpapers implements Package {
         logger.add(task);
         task.start();
 
-        try {
-            const homeDirectoryPath = os.homedir();
-            const backgroundsDirectoryPath = path.join(homeDirectoryPath, ".local", "share", "backgrounds");
-            const assetsDirectoryPath = path.join(import.meta.dirname, "assets");
-            const wallpapersDirectoryPath = path.join(assetsDirectoryPath, "wallpapers");
-            task.continue("Create backgrounds directory");
-            await fs.mkdir(backgroundsDirectoryPath, { recursive: true });
-            task.continue("Copy wallpapers");
-            await fs.cp(wallpapersDirectoryPath, backgroundsDirectoryPath, { recursive: true });
-            task.finish();
-        } catch (error) {
-            task.fail(error);
-        }
+        const homeDirectoryPath = os.homedir();
+        const backgroundsDirectoryPath = path.join(homeDirectoryPath, ".local", "share", "backgrounds");
+        const assetsDirectoryPath = path.join(import.meta.dirname, "assets");
+        const wallpapersDirectoryPath = path.join(assetsDirectoryPath, "wallpapers");
+        task.continue("Create backgrounds directory");
+        await fs.mkdir(backgroundsDirectoryPath, { recursive: true });
+        task.continue("Copy wallpapers");
+        await fs.cp(wallpapersDirectoryPath, backgroundsDirectoryPath, { recursive: true });
+        task.finish();
     }
 }

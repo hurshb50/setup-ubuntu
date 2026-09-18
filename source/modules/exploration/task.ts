@@ -1,14 +1,12 @@
 export class Task {
     name: string;
-    status: "idle" | "in-progress" | "done" | "failed";
+    status: "idle" | "in-progress" | "done";
     step?: string;
-    error?: string;
 
     constructor(name: string) {
         this.name = name;
         this.status = "idle";
         this.step = undefined;
-        this.error = undefined;
     }
 
     start(): void {
@@ -33,24 +31,6 @@ export class Task {
         }
 
         this.step = undefined;
-        this.error = undefined;
         this.status = "done";
-    }
-
-    fail(error: unknown): void {
-        if (this.status !== "in-progress") {
-            throw new Error(`Cannot fail task '${this.name}' when status is '${this.status}'.`);
-        }
-
-        this.step = undefined;
-        this.error = Task.message(error);
-        this.status = "failed";
-    }
-
-    private static message(error: unknown): string {
-        if (error instanceof Error) return error.message;
-        if (typeof error === "string") return error;
-
-        return String(error);
     }
 }

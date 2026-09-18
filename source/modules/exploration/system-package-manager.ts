@@ -17,17 +17,11 @@ export class SystemPackageManager {
         this.logger.add(task);
         task.start();
 
-        try {
-            const systemDependencyNames = this.packages.flatMap(
-                ({ systemDependencyNames }) => systemDependencyNames ?? [],
-            );
+        const systemDependencyNames = this.packages.flatMap(({ systemDependencyNames }) => systemDependencyNames ?? []);
 
-            const installCommand = `sudo apt-get install --yes --no-install-recommends ${systemDependencyNames.join(" ")}`;
-            childProcess.execSync(installCommand);
-            task.finish();
-        } catch (error) {
-            task.fail(error);
-        }
+        const installCommand = `sudo apt-get install --yes --no-install-recommends ${systemDependencyNames.join(" ")}`;
+        childProcess.execSync(installCommand);
+        task.finish();
     }
 
     async setupSources(): Promise<void> {
@@ -35,13 +29,9 @@ export class SystemPackageManager {
         this.logger.add(task);
         task.start();
 
-        try {
-            for (const systemPackage of this.packages) await systemPackage.setupSystemSources?.();
+        for (const systemPackage of this.packages) await systemPackage.setupSystemSources?.();
 
-            task.finish();
-        } catch (error) {
-            task.fail(error);
-        }
+        task.finish();
     }
 
     updateSystemPackageManager(): void {
@@ -49,12 +39,8 @@ export class SystemPackageManager {
         this.logger.add(task);
         task.start();
 
-        try {
-            childProcess.execSync("sudo DEBIAN_FRONTEND=noninteractive apt-get update --yes");
-            task.finish();
-        } catch (error) {
-            task.fail(error);
-        }
+        childProcess.execSync("sudo DEBIAN_FRONTEND=noninteractive apt-get update --yes");
+        task.finish();
     }
 
     installPackages(): void {
@@ -62,14 +48,10 @@ export class SystemPackageManager {
         this.logger.add(task);
         task.start();
 
-        try {
-            const systemNames = this.packages.flatMap(({ systemName }) => systemName ?? []);
-            const installCommand = `sudo apt-get install --yes --no-install-recommends ${systemNames.join(" ")}`;
-            childProcess.execSync(installCommand);
-            task.finish();
-        } catch (error) {
-            task.fail(error);
-        }
+        const systemNames = this.packages.flatMap(({ systemName }) => systemName ?? []);
+        const installCommand = `sudo apt-get install --yes --no-install-recommends ${systemNames.join(" ")}`;
+        childProcess.execSync(installCommand);
+        task.finish();
     }
 
     async postSystemInstall(): Promise<void> {

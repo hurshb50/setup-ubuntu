@@ -10,10 +10,6 @@ export class FuzzyFinder implements Package {
         logger.add(task);
         task.start();
 
-        try {
-            task.finish();
-        } catch (error) {
-            task.fail(error);
-        }
+        task.finish();
     }
 }

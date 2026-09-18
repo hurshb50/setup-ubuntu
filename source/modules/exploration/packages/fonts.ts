@@ -13,16 +13,12 @@ export class Fonts implements Package {
         logger.add(task);
         task.start();
 
-        try {
-            const fontsDirectoryPath = path.join(import.meta.dirname, "assets", "fonts");
-            const systemFontsDirectoryPath = path.join(os.homedir(), ".local", "share", "fonts");
-            task.continue("Create fonts directory");
-            await fs.mkdir(systemFontsDirectoryPath, { recursive: true });
-            task.continue("Copy fonts");
-            await fs.cp(fontsDirectoryPath, systemFontsDirectoryPath, { recursive: true });
-            task.finish();
-        } catch (error) {
-            task.fail(error);
-        }
+        const fontsDirectoryPath = path.join(import.meta.dirname, "assets", "fonts");
+        const systemFontsDirectoryPath = path.join(os.homedir(), ".local", "share", "fonts");
+        task.continue("Create fonts directory");
+        await fs.mkdir(systemFontsDirectoryPath, { recursive: true });
+        task.continue("Copy fonts");
+        await fs.cp(fontsDirectoryPath, systemFontsDirectoryPath, { recursive: true });
+        task.finish();
     }
 }

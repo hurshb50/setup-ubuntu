@@ -11,18 +11,14 @@ export class ShellConfiguration implements Package {
         logger.add(task);
         task.start();
 
-        try {
-            const homeDirectoryPath = os.homedir();
-            const homeShellConfigurationFilePath = path.join(homeDirectoryPath, ".bashrc");
-            const assetsDirectoryPath = path.join(import.meta.dirname, "assets");
-            const sourceShellConfigurationPath = path.join(assetsDirectoryPath, ".bashrc");
+        const homeDirectoryPath = os.homedir();
+        const homeShellConfigurationFilePath = path.join(homeDirectoryPath, ".bashrc");
+        const assetsDirectoryPath = path.join(import.meta.dirname, "assets");
+        const sourceShellConfigurationPath = path.join(assetsDirectoryPath, ".bashrc");
 
-            task.continue("Copy shell configuration");
-            await fs.copyFile(sourceShellConfigurationPath, homeShellConfigurationFilePath);
+        task.continue("Copy shell configuration");
+        await fs.copyFile(sourceShellConfigurationPath, homeShellConfigurationFilePath);
 
-            task.finish();
-        } catch (error) {
-            task.fail(error);
-        }
+        task.finish();
     }
 }

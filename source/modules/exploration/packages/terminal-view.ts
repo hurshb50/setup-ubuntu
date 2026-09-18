@@ -11,12 +11,8 @@ export class TerminalView implements Package {
         logger.add(task);
         task.start();
 
-        try {
-            task.continue("Install oh-my-posh");
-            await execAsync("curl -s https://ohmyposh.dev/install.sh | bash -s");
-            task.finish();
-        } catch (error) {
-            task.fail(error);
-        }
+        task.continue("Install oh-my-posh");
+        await execAsync("curl -s https://ohmyposh.dev/install.sh | bash -s");
+        task.finish();
     }
 }

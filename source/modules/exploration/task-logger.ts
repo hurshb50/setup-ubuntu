@@ -10,7 +10,6 @@ export class TaskLogger {
     private tick: number;
     private static check = "✔";
     private static dots = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
-    private static x = "✘";
 
     constructor() {
         this.status = "idle";
@@ -55,14 +54,12 @@ export class TaskLogger {
     private write(): void {
         if (this.status === "idle") throw new Error("Cannot write to stdout if status is 'idle'.");
 
-        const columns = stdout.columns ?? 80;
+        const columns = stdout.columns ?? 120;
 
         for (const task of this.tasks) {
             const width = columns - 1;
-            const leftBudget = Math.max(1, Math.floor(width / 2));
-            const rightBudget = Math.max(0, width - leftBudget);
-            const leftText = this.truncate(task.name, leftBudget);
-            const rightText = this.truncate(task.step ?? task.error ?? "", rightBudget);
+            const leftText = task.name;
+            const rightText = task.step ?? "";
             this.reset(task);
             this.icon(task);
             this.padding(2);
@@ -74,12 +71,6 @@ export class TaskLogger {
         }
 
         this.up(this.tasks.length - 1);
-    }
-
-    private truncate(text: string, max: number): string {
-        if (max <= 0) return "";
-        if (text.length <= max) return text;
-        return max === 1 ? "…" : text.slice(0, max - 1) + "…";
     }
 
     private dot(): void {
@@ -101,7 +92,6 @@ export class TaskLogger {
         let color = styles.yellow.open;
 
         if (task.status === "done") color = styles.green.open;
-        else if (task.status === "failed") color = styles.red.open;
 
         this.log(escapes.cursorLeft);
         this.log(escapes.eraseLine);
@@ -111,8 +101,7 @@ export class TaskLogger {
     private icon(task: Task): void {
         if (task.status === "idle") this.padding(2);
         else if (task.status === "in-progress") this.dot();
-        else if (task.status === "done") this.log(TaskLogger.check);
-        else this.log(TaskLogger.x);
+        else this.log(TaskLogger.check);
     }
 
     private padding(count = 1): void {

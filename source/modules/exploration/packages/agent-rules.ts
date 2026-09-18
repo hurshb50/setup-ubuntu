@@ -11,22 +11,18 @@ export class AgentRules implements Package {
         logger.add(task);
         task.start();
 
-        try {
-            const homeDirectoryPath = os.homedir();
-            const globalRulesDirectoryPath = path.join(homeDirectoryPath, ".config", "zed");
-            const globalRulesFilePath = path.join(globalRulesDirectoryPath, "AGENTS.md");
-            const assetsDirectoryPath = path.join(import.meta.dirname, "assets");
-            const rulesSourceFilePath = path.join(assetsDirectoryPath, "AGENTS.md");
+        const homeDirectoryPath = os.homedir();
+        const globalRulesDirectoryPath = path.join(homeDirectoryPath, ".config", "zed");
+        const globalRulesFilePath = path.join(globalRulesDirectoryPath, "AGENTS.md");
+        const assetsDirectoryPath = path.join(import.meta.dirname, "assets");
+        const rulesSourceFilePath = path.join(assetsDirectoryPath, "AGENTS.md");
 
-            task.continue("Create global rules directory");
-            await fs.mkdir(globalRulesDirectoryPath, { recursive: true });
+        task.continue("Create global rules directory");
+        await fs.mkdir(globalRulesDirectoryPath, { recursive: true });
 
-            task.continue("Copy agent rules");
-            await fs.copyFile(rulesSourceFilePath, globalRulesFilePath);
+        task.continue("Copy agent rules");
+        await fs.copyFile(rulesSourceFilePath, globalRulesFilePath);
 
-            task.finish();
-        } catch (error) {
-            task.fail(error);
-        }
+        task.finish();
     }
 }
