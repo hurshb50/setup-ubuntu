@@ -12,11 +12,11 @@ export class AutoSuggestion implements Package {
         task.start();
 
         task.continue("Update package manager");
-        await context.dependencyManager.update();
+        await context.dependencyManager.update(task);
 
         const dependencies = ["xz-utils"];
         task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
-        await context.dependencyManager.install(dependencies);
+        await context.dependencyManager.install(dependencies, task);
 
         const temporaryDirectoryPath = await fs.mkdtemp(path.join(os.tmpdir(), "ble.sh"));
         const installationFilePath = path.join(temporaryDirectoryPath, "ble-nightly", "ble.sh");

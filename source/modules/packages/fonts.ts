@@ -10,11 +10,11 @@ export class Fonts implements Package {
         task.start();
 
         task.continue("Update package manager");
-        await context.dependencyManager.update();
+        await context.dependencyManager.update(task);
 
         const dependencies = ["fontconfig"];
         task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
-        await context.dependencyManager.install(dependencies);
+        await context.dependencyManager.install(dependencies, task);
 
         const sourceDirectoryPath = path.join(context.directories.assets, "fonts");
         const destinationDirectoryPath = path.join(context.directories.home, ".local", "share", "fonts");

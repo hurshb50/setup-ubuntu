@@ -1,5 +1,5 @@
 import path from "path";
-import type { InstallContext, Package } from "../package";
+import type { InstallContext, Package } from "../../package";
 import { Task } from "../task";
 import { execAsync } from "../../exec-async";
 
@@ -10,11 +10,11 @@ export class PasswordManager implements Package {
         task.start();
 
         task.continue("Update package manager");
-        await context.dependencyManager.update();
+        await context.dependencyManager.update(task);
 
         const systemDependencies = ["gnupg"];
         task.continue(`Installing dependencies: ${systemDependencies.join(", ")}`);
-        await context.dependencyManager.install(systemDependencies);
+        await context.dependencyManager.install(systemDependencies, task);
 
         const keyringFilePath = path.join("/", "usr", "share", "keyrings", "1password-archive-keyring.gpg");
         const sourceFilePath = path.join("/", "etc", "apt", "sources.list.d", "1password.list");
@@ -45,11 +45,11 @@ export class PasswordManager implements Package {
         );
 
         task.continue("Update package manager");
-        await context.dependencyManager.update();
+        await context.dependencyManager.update(task);
 
         const dependencies = ["1password"];
         task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
-        await context.dependencyManager.install(dependencies);
+        await context.dependencyManager.install(dependencies, task);
 
         task.finish();
     }

@@ -1,4 +1,4 @@
-import type { Task } from "./task";
+import type { Task } from "./exploration/task";
 import styles from "ansi-styles";
 import escapes from "ansi-escapes";
 import { setTimeout } from "timers/promises";
@@ -10,6 +10,7 @@ export class Logger {
     private tick: number;
     private static check = "✔";
     private static dots = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+    private static defaultColumns = 150;
 
     constructor() {
         this.status = "idle";
@@ -62,19 +63,18 @@ export class Logger {
     private write(): void {
         if (this.status === "idle") throw new Error("Cannot write to stdout if status is 'idle'.");
 
-        const columns = stdout.columns ?? 120;
+        const columns = stdout.columns ?? Logger.defaultColumns;
 
         for (const [taskIndex, task] of this.tasks.entries()) {
             const width = columns - 1;
-            const leftText = task.name;
-            const rightText = task.step ?? "";
+            const { left, right } = this.render(task, width);
             this.reset(task);
             this.icon(task);
             this.padding(2);
-            this.log(leftText);
-            const centerPadding = Math.max(1, width - (2 + 2 + leftText.length + rightText.length));
+            this.log(left);
+            const centerPadding = Math.max(1, width - (4 + left.length + right.length));
             this.padding(centerPadding);
-            this.log(rightText);
+            this.log(right);
 
             if (taskIndex !== this.tasks.length - 1) this.down(1);
         }
@@ -95,6 +95,20 @@ export class Logger {
 
     private log(message: string): void {
         stdout.write(message);
+    }
+
+    private truncate(text: string, maxWidth: number): string {
+        if (text.length <= maxWidth) return text;
+        if (maxWidth < 1) return "";
+
+        return `${text.slice(0, maxWidth - 1)}…`;
+    }
+
+    private render(task: Task, width: number): { left: string; right: string } {
+        const rightText = this.truncate(task.step ?? "", Math.max(0, width - 5 - task.name.length));
+        const left = this.truncate(task.name, Math.max(0, width - 4 - rightText.length));
+
+        return { left, right: rightText };
     }
 
     private reset(task: Task): void {
@@ -130,7 +144,7 @@ export class Logger {
     }
 
     private banner(title: string): void {
-        const columns = stdout.columns ?? 120;
+        const columns = stdout.columns ?? Logger.defaultColumns;
         const width = Math.max(4, columns - 2);
         const text = ` ${title} `;
         const remaining = Math.max(0, width - text.length);

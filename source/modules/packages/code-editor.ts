@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
-import type { InstallContext, Package } from "../package";
+import type { InstallContext, Package } from "../../package";
 import { Task } from "../task";
 import { execAsync } from "../../exec-async";
 

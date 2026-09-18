@@ -10,11 +10,11 @@ export class Browser implements Package {
         task.start();
 
         task.continue("Update package manager");
-        await context.dependencyManager.update();
+        await context.dependencyManager.update(task);
 
         const systemDependencies = ["gnupg"];
         task.continue(`Installing dependencies: ${systemDependencies.join(", ")}`);
-        await context.dependencyManager.install(systemDependencies);
+        await context.dependencyManager.install(systemDependencies, task);
 
         const keyringFilePath = path.join("/", "usr", "share", "keyrings", "google-chrome.gpg");
         const sourceFilePath = path.join("/", "etc", "apt", "sources.list.d", "google-chrome.list");
@@ -29,11 +29,11 @@ export class Browser implements Package {
         );
 
         task.continue("Update package manager");
-        await context.dependencyManager.update();
+        await context.dependencyManager.update(task);
 
         const dependencies = ["google-chrome-stable"];
         task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
-        await context.dependencyManager.install(dependencies);
+        await context.dependencyManager.install(dependencies, task);
 
         task.finish();
     }

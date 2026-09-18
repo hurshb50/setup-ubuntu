@@ -9,11 +9,11 @@ export class TerminalView implements Package {
         task.start();
 
         task.continue("Update package manager");
-        await context.dependencyManager.update();
+        await context.dependencyManager.update(task);
 
         const dependencies = ["unzip"];
         task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
-        await context.dependencyManager.install(dependencies);
+        await context.dependencyManager.install(dependencies, task);
 
         task.continue("Install oh-my-posh");
         await execAsync("curl -s https://ohmyposh.dev/install.sh | bash -s");
