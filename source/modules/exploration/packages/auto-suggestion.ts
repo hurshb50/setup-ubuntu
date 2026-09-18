@@ -2,18 +2,19 @@ import fs from "fs/promises";
 import os from "os";
 import path from "path";
 import type { Package } from "../package";
+import { Task } from "../task";
 import type { TaskLogger } from "../task-logger";
 import { execAsync } from "../../exec-async";
 
 export class AutoSuggestion implements Package {
     systemDependencyNames = ["xz-utils"];
 
-    async postSystemInstall(taskLogger: TaskLogger): Promise<void> {
-        const taskId = taskLogger.registerTask("Setup Auto Suggestion");
+    async postSystemInstall(logger: TaskLogger): Promise<void> {
+        const task = new Task("Setup Auto Suggestion");
+        logger.add(task);
+        task.start();
 
         try {
-            taskLogger.startTask(taskId);
-
             const systemTemporaryDirectoryPath = os.tmpdir();
             const temporaryDirectoryPathPrefix = path.join(systemTemporaryDirectoryPath, "ble.sh");
             const temporaryDirectoryPath = await fs.mkdtemp(temporaryDirectoryPathPrefix);
@@ -24,23 +25,23 @@ export class AutoSuggestion implements Package {
             const homeDirectoryPath = os.homedir();
             const homeBlercFilePath = path.join(homeDirectoryPath, ".blerc");
 
-            taskLogger.updateTaskStep(taskId, "Download ble.sh");
+            task.continue("Download ble.sh");
             await execAsync(
                 `curl -L https://github.com/akinomyoga/ble.sh/releases/download/nightly/ble-nightly.tar.xz | tar xJf - -C ${temporaryDirectoryPath}`,
             );
 
-            taskLogger.updateTaskStep(taskId, "Install ble.sh");
+            task.continue("Install ble.sh");
             await execAsync(`bash ${bleshFilePath} --install ${localShareDirectoryPath}`);
 
-            taskLogger.updateTaskStep(taskId, "Remove temporary directory");
+            task.continue("Remove temporary directory");
             await fs.rm(temporaryDirectoryPath, { recursive: true });
 
-            taskLogger.updateTaskStep(taskId, "Copy configuration");
+            task.continue("Copy configuration");
             await fs.copyFile(blercFilePath, homeBlercFilePath);
 
-            taskLogger.finishTask(taskId);
-        } catch {
-            taskLogger.failTask(taskId);
+            task.finish();
+        } catch (error) {
+            task.fail(error);
         }
     }
 }

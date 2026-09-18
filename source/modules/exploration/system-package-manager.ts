@@ -1,75 +1,80 @@
 import childProcess from "node:child_process";
 import type { Package } from "./package";
+import { Task } from "./task";
 import type { TaskLogger } from "./task-logger";
 
 export class SystemPackageManager {
     packages: Package[];
-    taskLogger: TaskLogger;
+    logger: TaskLogger;
 
-    constructor(packages: Package[], taskLogger: TaskLogger) {
+    constructor(packages: Package[], logger: TaskLogger) {
         this.packages = packages;
-        this.taskLogger = taskLogger;
+        this.logger = logger;
     }
 
     installPrequisites(): void {
-        const taskId = this.taskLogger.registerTask("Install System Dependencies");
-        this.taskLogger.startTask(taskId);
+        const task = new Task("Install System Dependencies");
+        this.logger.add(task);
+        task.start();
 
         try {
             const systemDependencyNames = this.packages.flatMap(
                 ({ systemDependencyNames }) => systemDependencyNames ?? [],
             );
-            
+
             const installCommand = `sudo apt-get install --yes --no-install-recommends ${systemDependencyNames.join(" ")}`;
             childProcess.execSync(installCommand);
-            this.taskLogger.finishTask(taskId);
-        } catch {
-            this.taskLogger.failTask(taskId);
+            task.finish();
+        } catch (error) {
+            task.fail(error);
         }
     }
 
     async setupSources(): Promise<void> {
-        const taskId = this.taskLogger.registerTask("Setup System Sources");
-        this.taskLogger.startTask(taskId);
+        const task = new Task("Setup System Sources");
+        this.logger.add(task);
+        task.start();
 
         try {
             for (const systemPackage of this.packages) await systemPackage.setupSystemSources?.();
 
-            this.taskLogger.finishTask(taskId);
-        } catch {
-            this.taskLogger.failTask(taskId);
+            task.finish();
+        } catch (error) {
+            task.fail(error);
         }
     }
 
     updateSystemPackageManager(): void {
-        const taskId = this.taskLogger.registerTask("Update System Package Manager");
-        this.taskLogger.startTask(taskId);
+        const task = new Task("Update System Package Manager");
+        this.logger.add(task);
+        task.start();
 
         try {
             childProcess.execSync("sudo DEBIAN_FRONTEND=noninteractive apt-get update --yes");
-            this.taskLogger.finishTask(taskId);
-        } catch {
-            this.taskLogger.failTask(taskId);
+            task.finish();
+        } catch (error) {
+            task.fail(error);
         }
     }
 
     installPackages(): void {
-        const taskId = this.taskLogger.registerTask("Install System Packages");
-        this.taskLogger.startTask(taskId);
+        const task = new Task("Install System Packages");
+        this.logger.add(task);
+        task.start();
 
         try {
             const systemNames = this.packages.flatMap(({ systemName }) => systemName ?? []);
             const installCommand = `sudo apt-get install --yes --no-install-recommends ${systemNames.join(" ")}`;
             childProcess.execSync(installCommand);
-            this.taskLogger.finishTask(taskId);
-        } catch {
-            this.taskLogger.failTask(taskId);
+            task.finish();
+        } catch (error) {
+            task.fail(error);
         }
     }
 
     async postSystemInstall(): Promise<void> {
         const postSystemInstallCalls = this.packages.map((systemPackage) =>
-            systemPackage.postSystemInstall(this.taskLogger),
+            systemPackage.postSystemInstall(this.logger),
         );
 
         await Promise.all(postSystemInstallCalls);

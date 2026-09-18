@@ -4,5 +4,5 @@ export interface Package {
     systemDependencyNames?: string[];
     systemName?: string;
     setupSystemSources?: () => Promise<void>;
-    postSystemInstall: (taskLogger: TaskLogger) => Promise<void>;
+    postSystemInstall: (logger: TaskLogger) => Promise<void>;
 }

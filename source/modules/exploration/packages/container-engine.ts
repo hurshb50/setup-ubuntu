@@ -1,5 +1,6 @@
 import os from "os";
 import type { Package } from "../package";
+import { Task } from "../task";
 import type { TaskLogger } from "../task-logger";
 import { execAsync } from "../../exec-async";
 
@@ -17,16 +18,17 @@ export class ContainerEngine implements Package {
         );
     }
 
-    async postSystemInstall(taskLogger: TaskLogger): Promise<void> {
-        const taskId = taskLogger.registerTask("Setup Container Engine");
+    async postSystemInstall(logger: TaskLogger): Promise<void> {
+        const task = new Task("Setup Container Engine");
+        logger.add(task);
+        task.start();
 
         try {
-            taskLogger.startTask(taskId);
-            taskLogger.updateTaskStep(taskId, "Add user to docker group");
+            task.continue("Add user to docker group");
             await execAsync(`sudo usermod --append --groups docker ${os.userInfo().username}`);
-            taskLogger.finishTask(taskId);
-        } catch {
-            taskLogger.failTask(taskId);
+            task.finish();
+        } catch (error) {
+            task.fail(error);
         }
     }
 }

@@ -1,4 +1,5 @@
 import type { Package } from "../package";
+import { Task } from "../task";
 import type { TaskLogger } from "../task-logger";
 import { execAsync } from "../../exec-async";
 
@@ -16,14 +17,15 @@ export class Browser implements Package {
         );
     }
 
-    async postSystemInstall(taskLogger: TaskLogger): Promise<void> {
-        const taskId = taskLogger.registerTask("Setup Browser");
+    async postSystemInstall(logger: TaskLogger): Promise<void> {
+        const task = new Task("Setup Browser");
+        logger.add(task);
+        task.start();
 
         try {
-            taskLogger.startTask(taskId);
-            taskLogger.finishTask(taskId);
-        } catch {
-            taskLogger.failTask(taskId);
+            task.finish();
+        } catch (error) {
+            task.fail(error);
         }
     }
 }

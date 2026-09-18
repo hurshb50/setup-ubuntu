@@ -1,17 +1,19 @@
 import type { Package } from "../package";
+import { Task } from "../task";
 import type { TaskLogger } from "../task-logger";
 
 export class FuzzyFinder implements Package {
     systemName = "fzf";
 
-    async postSystemInstall(taskLogger: TaskLogger): Promise<void> {
-        const taskId = taskLogger.registerTask("Setup Fuzzy Finder");
+    async postSystemInstall(logger: TaskLogger): Promise<void> {
+        const task = new Task("Setup Fuzzy Finder");
+        logger.add(task);
+        task.start();
 
         try {
-            taskLogger.startTask(taskId);
-            taskLogger.finishTask(taskId);
-        } catch {
-            taskLogger.failTask(taskId);
+            task.finish();
+        } catch (error) {
+            task.fail(error);
         }
     }
 }

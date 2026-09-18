@@ -18,12 +18,17 @@ import { VersionControlSystem } from "./modules/exploration/packages/version-con
 import { Wallpapers } from "./modules/exploration/packages/wallpapers";
 import { SystemPackageManager } from "./modules/exploration/system-package-manager";
 import { TaskLogger } from "./modules/exploration/task-logger";
+import { Task } from "./modules/exploration/task";
+import { setTimeout } from "timers/promises";
 
 program
     .name(name)
     .version(version)
     .description("TODO")
     .action(async () => {
+        const logger = new TaskLogger();
+        logger.start();
+
         const packages: Package[] = [
             new VersionControlSystem(),
             new FuzzyFinder(),
@@ -40,16 +45,22 @@ program
             new Wallpapers(),
         ];
 
-        const taskLogger = new TaskLogger(80);
-        const systemPackageManager = new SystemPackageManager(packages, taskLogger);
-        taskLogger.start();
-        systemPackageManager.installPrequisites();
-        // await systemPackageManager.setupSources();
-        // systemPackageManager.updateSystemPackageManager();
-        // systemPackageManager.installPackages();
-        // await systemPackageManager.postSystemInstall();
-        // await new ShellConfiguration().postSystemInstall(taskLogger);
-        taskLogger.stop();
+        const systemPackageManager = new SystemPackageManager(packages, logger);
+
+        const installation = (async () => {
+            try {
+                systemPackageManager.installPrequisites();
+                // await systemPackageManager.setupSources();
+                // systemPackageManager.updateSystemPackageManager();
+                // systemPackageManager.installPackages();
+                // await systemPackageManager.postSystemInstall();
+                // await new ShellConfiguration().postSystemInstall(logger);
+            } finally {
+                logger.stop();
+            }
+        })();
+
+        await installation;
     });
 
 program.parse();

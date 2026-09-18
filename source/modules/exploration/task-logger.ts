@@ -10,6 +10,7 @@ export class TaskLogger {
     private tick: number;
     private static check = "✔";
     private static dots = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+    private static x = "✘";
 
     constructor() {
         this.status = "idle";
@@ -21,10 +22,20 @@ export class TaskLogger {
         this.tasks.push(task);
     }
 
-    public async start(): Promise<void> {
+    public start(): void {
         if (this.status !== "idle") throw new Error(`Cannot start task logger when status is '${this.status}'.`);
 
         this.status = "in-progress";
+        void this.loop();
+    }
+
+    public stop(): void {
+        if (this.status !== "in-progress") throw new Error(`Cannot start task logger when status is '${this.status}'.`);
+
+        this.status = "done";
+    }
+
+    private async loop(): Promise<void> {
         const minimumIntervalMilliSeconds = 80;
 
         while (this.status === "in-progress") {
@@ -36,49 +47,42 @@ export class TaskLogger {
             await setTimeout(remainingTime);
             this.tick += 1;
         }
-    }
 
-    public stop(): void {
-        if (this.status !== "in-progress") throw new Error(`Cannot start task logger when status is '${this.status}'.`);
-
-        this.status = "done";
+        this.write();
+        this.newline(this.tasks.length);
     }
 
     private write(): void {
-        const dot = this.dot();
+        if (this.status === "idle") throw new Error("Cannot write to stdout if status is 'idle'.");
+
+        const columns = stdout.columns ?? 80;
 
         for (const task of this.tasks) {
+            const width = columns - 1;
+            const leftBudget = Math.max(1, Math.floor(width / 2));
+            const rightBudget = Math.max(0, width - leftBudget);
+            const leftText = this.truncate(task.name, leftBudget);
+            const rightText = this.truncate(task.step ?? task.error ?? "", rightBudget);
             this.reset(task);
-
-            let leftLength = 0;
-
-            if (task.status === "idle") this.padding(2);
-            else if (task.status === "in-progress") this.log(dot);
-            else this.log(TaskLogger.check);
-            leftLength += 2;
-
+            this.icon(task);
             this.padding(2);
-            this.log(task.name);
-            leftLength += 2 + task.name.length;
-
-            let rightLength = 0;
-
-            if (task.step) rightLength += task.step.length;
-            else if (task.error) rightLength += task.error.length;
-
-            const centerLength = stdout.columns - rightLength - leftLength;
-            this.padding(centerLength);
-
-            if (task.step) this.log(task.step);
-            else if (task.error) this.log(task.error);
-
-            this.newline();
+            this.log(leftText);
+            const centerPadding = Math.max(1, width - (2 + 2 + leftText.length + rightText.length));
+            this.padding(centerPadding);
+            this.log(rightText);
+            this.down();
         }
 
-        this.up(this.tasks.length);
+        this.up(this.tasks.length - 1);
     }
 
-    private dot(): string {
+    private truncate(text: string, max: number): string {
+        if (max <= 0) return "";
+        if (text.length <= max) return text;
+        return max === 1 ? "…" : text.slice(0, max - 1) + "…";
+    }
+
+    private dot(): void {
         const dotIndex = this.tick % TaskLogger.dots.length;
         const dot = TaskLogger.dots[dotIndex];
 
@@ -86,7 +90,7 @@ export class TaskLogger {
             throw new Error(`Invalid index '${dotIndex}' to access dots of length '${TaskLogger.dots.length}'.`);
         }
 
-        return dot;
+        this.log(dot);
     }
 
     private log(message: string): void {
@@ -104,15 +108,26 @@ export class TaskLogger {
         this.log(color);
     }
 
-    private padding(count = 0): void {
+    private icon(task: Task): void {
+        if (task.status === "idle") this.padding(2);
+        else if (task.status === "in-progress") this.dot();
+        else if (task.status === "done") this.log(TaskLogger.check);
+        else this.log(TaskLogger.x);
+    }
+
+    private padding(count = 1): void {
         this.log(" ".repeat(count));
     }
 
-    private newline(count = 0): void {
+    private newline(count = 1): void {
         this.log("\n".repeat(count));
     }
 
-    private up(count = 0): void {
+    private up(count = 1): void {
         this.log(escapes.cursorUp(count));
+    }
+
+    private down(count = 1): void {
+        this.log(escapes.cursorDown(count));
     }
 }

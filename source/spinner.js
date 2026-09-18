@@ -13,15 +13,11 @@
   -
 */
 
-
 class ProgressionLogger {
-  constructor() {}
+    constructor() {}
 }
 
-
 // // let message = "Hello world! How are you doing?"
-
-
 
 // // await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -33,12 +29,10 @@ class ProgressionLogger {
 // // process.stdout.write("\r\x1b[2K");
 // // console.log("done");
 
-
 // const groups = [
 //   {messages:["Hello", "Hi"] },
 //   {messages:["Who are you?", "Hursh"] }
 // ]
-
 
 // const dots = [".  ", ".. ", "...", " ..", "  ."];
 // let frame = 0;

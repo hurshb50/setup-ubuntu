@@ -1,18 +1,20 @@
 import type { Package } from "../package";
+import { Task } from "../task";
 import type { TaskLogger } from "../task-logger";
 
 export class VersionControlSystem implements Package {
     systemDependencyNames = ["build-essential"];
     systemName = "git";
 
-    async postSystemInstall(taskLogger: TaskLogger): Promise<void> {
-        const taskId = taskLogger.registerTask("Setup Version Control System");
+    async postSystemInstall(logger: TaskLogger): Promise<void> {
+        const task = new Task("Setup Version Control System");
+        logger.add(task);
+        task.start();
 
         try {
-            taskLogger.startTask(taskId);
-            taskLogger.finishTask(taskId);
-        } catch {
-            taskLogger.failTask(taskId);
+            task.finish();
+        } catch (error) {
+            task.fail(error);
         }
     }
 }

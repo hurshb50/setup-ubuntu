@@ -2,6 +2,7 @@ import fs from "fs/promises";
 import os from "os";
 import path from "path";
 import type { Package } from "../package";
+import { Task } from "../task";
 import type { TaskLogger } from "../task-logger";
 import { execAsync } from "../../exec-async";
 
@@ -12,27 +13,27 @@ export class CodeEditor implements Package {
         await fs.access(homeShellConfigurationFilePath);
     }
 
-    async postSystemInstall(taskLogger: TaskLogger): Promise<void> {
-        const taskId = taskLogger.registerTask("Setup Code Editor");
+    async postSystemInstall(logger: TaskLogger): Promise<void> {
+        const task = new Task("Setup Code Editor");
+        logger.add(task);
+        task.start();
 
         try {
-            taskLogger.startTask(taskId);
-
             const assetsDirectoryPath = path.join(import.meta.dirname, "assets");
             const zedDirectoryPath = path.join(assetsDirectoryPath, "zed");
             const homeDirectoryPath = os.homedir();
             const configurationDirectoryPath = path.join(homeDirectoryPath, ".config");
             const configurationZedDirectoryPath = path.join(configurationDirectoryPath, "zed");
 
-            taskLogger.updateTaskStep(taskId, "Install Zed");
+            task.continue("Install Zed");
             await execAsync("curl -f https://zed.dev/install.sh | sh");
 
-            taskLogger.updateTaskStep(taskId, "Copy configuration");
+            task.continue("Copy configuration");
             await fs.cp(zedDirectoryPath, configurationZedDirectoryPath, { recursive: true });
 
-            taskLogger.finishTask(taskId);
-        } catch {
-            taskLogger.failTask(taskId);
+            task.finish();
+        } catch (error) {
+            task.fail(error);
         }
     }
 }
