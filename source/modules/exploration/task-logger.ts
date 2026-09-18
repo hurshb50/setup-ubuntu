@@ -1,148 +1,118 @@
-import crypto from "crypto";
+import type { Task } from "./task";
+import styles from "ansi-styles";
+import escapes from "ansi-escapes";
+import { setTimeout } from "timers/promises";
+import { stdout } from "process";
 
 export class TaskLogger {
-    tasks: Map<crypto.UUID, Task>;
-    timeout?: NodeJS.Timeout;
-    spinnerFrame: number;
-    maxWidth: number;
+    status: "idle" | "in-progress" | "done";
+    private tasks: Task[];
+    private tick: number;
+    private static check = "✔";
+    private static dots = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 
-    constructor(maxWidth: number) {
-        this.tasks = new Map();
-        this.timeout = undefined;
-        this.spinnerFrame = 0;
-        this.maxWidth = maxWidth;
+    constructor() {
+        this.status = "idle";
+        this.tasks = [];
+        this.tick = 0;
     }
 
-    registerTask(header: string): crypto.UUID {
-        const taskId = crypto.randomUUID();
-
-        const task: Task = {
-            header,
-            status: "idle",
-            row: this.tasks.size,
-            step: undefined,
-        };
-
-        this.tasks.set(taskId, task);
-        return taskId;
+    public add(task: Task): void {
+        this.tasks.push(task);
     }
 
-    startTask(taskId: crypto.UUID): void {
-        const task = this.tasks.get(taskId);
+    public async start(): Promise<void> {
+        if (this.status !== "idle") throw new Error(`Cannot start task logger when status is '${this.status}'.`);
 
-        if (task === undefined) throw new Error(`Task with id '${taskId}' does not exist.`);
+        this.status = "in-progress";
+        const minimumIntervalMilliSeconds = 80;
 
-        if (task.status !== "idle") {
-            throw new Error(`Cannot start task state when status is ${task.status}.`);
+        while (this.status === "in-progress") {
+            const start = performance.now();
+            this.write();
+            const end = performance.now();
+            const elapsedTime = end - start;
+            const remainingTime = minimumIntervalMilliSeconds - elapsedTime;
+            await setTimeout(remainingTime);
+            this.tick += 1;
         }
-
-        task.status = "in-progress";
     }
 
-    failTask(taskId: crypto.UUID): void {
-        const task = this.tasks.get(taskId);
+    public stop(): void {
+        if (this.status !== "in-progress") throw new Error(`Cannot start task logger when status is '${this.status}'.`);
 
-        if (task === undefined) throw new Error(`Task with id '${taskId}' does not exist.`);
-
-        if (task.status !== "in-progress") {
-            throw new Error(`Cannot fail task state when status is ${task.status}.`);
-        }
-
-        task.status = "failed";
+        this.status = "done";
     }
 
-    finishTask(taskId: crypto.UUID): void {
-        const task = this.tasks.get(taskId);
+    private write(): void {
+        const dot = this.dot();
 
-        if (task === undefined) throw new Error(`Task with id '${taskId}' does not exist.`);
+        for (const task of this.tasks) {
+            this.reset(task);
 
-        if (task.status !== "in-progress") {
-            throw new Error(`Cannot finish task state when status is ${task.status}.`);
-        }
+            let leftLength = 0;
 
-        task.step = undefined;
-        task.status = "done";
-    }
-
-    updateTaskStep(taskId: crypto.UUID, step: string): void {
-        const task = this.tasks.get(taskId);
-
-        if (task === undefined) throw new Error(`Task with id '${taskId}' does not exist.`);
-
-        if (task.status !== "in-progress") {
-            throw new Error(`Cannot update step for task state when status is ${task.status}.`);
-        }
-
-        task.step = step;
-    }
-
-    start(): void {
-        this.timeout = setInterval(() => this.printTasks(), 80);
-    }
-
-    stop(): void {
-        if (!this.timeout) throw new Error("Logger has not been started.");
-
-        clearInterval(this.timeout);
-    }
-
-    log(message: string): void {
-        process.stdout.write(message);
-    }
-
-    private printTasks(): void {
-        const dots = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
-
-        const tasks = this.tasks
-            .values()
-            .toArray()
-            .toSorted((taskA, taskB) => taskA.row - taskB.row);
-
-        const up = (rows = 1) => `\x1b[${rows}A`;
-        const start = "\r";
-        const clear = "\x1b[2K";
-        const newline = "\n";
-        const padding = (size = 1) => " ".repeat(size - 1);
-        const check = "✔";
-        const dot = dots[this.spinnerFrame];
-        const yellow = "\x1b[33m";
-        const green = "\x1b[32m";
-        const red = "\x1b[31m";
-
-        if (dot === undefined) {
-            throw new Error(`Invalid index '${this.spinnerFrame}' to access dots of length '${dots.length}'.`);
-        }
-
-        for (const task of tasks) {
-            this.log(start);
-            this.log(task.status === "done" ? green : task.status === "failed" ? red : yellow);
-            this.log(clear);
-            this.log(padding(2));
-
-            if (task.status === "idle") this.log(padding(2));
+            if (task.status === "idle") this.padding(2);
             else if (task.status === "in-progress") this.log(dot);
-            else this.log(check);
+            else this.log(TaskLogger.check);
+            leftLength += 2;
 
-            this.log(padding(2));
-            this.log(task.header);
+            this.padding(2);
+            this.log(task.name);
+            leftLength += 2 + task.name.length;
 
-            const leftPaddingSize = 2 + 2 + 2 + task.header.length;
-            const rightPaddingSize = this.maxWidth - leftPaddingSize - (task.step?.length ?? 0);
-            this.log(padding(rightPaddingSize));
+            let rightLength = 0;
+
+            if (task.step) rightLength += task.step.length;
+            else if (task.error) rightLength += task.error.length;
+
+            const centerLength = stdout.columns - rightLength - leftLength;
+            this.padding(centerLength);
 
             if (task.step) this.log(task.step);
+            else if (task.error) this.log(task.error);
 
-            this.log(newline);
+            this.newline();
         }
 
-        this.log(up(tasks.length));
-        this.spinnerFrame = (this.spinnerFrame + 1) % dots.length;
+        this.up(this.tasks.length);
     }
-}
 
-interface Task {
-    status: "idle" | "in-progress" | "done" | "failed";
-    header: string;
-    row: number;
-    step?: string;
+    private dot(): string {
+        const dotIndex = this.tick % TaskLogger.dots.length;
+        const dot = TaskLogger.dots[dotIndex];
+
+        if (dot === undefined) {
+            throw new Error(`Invalid index '${dotIndex}' to access dots of length '${TaskLogger.dots.length}'.`);
+        }
+
+        return dot;
+    }
+
+    private log(message: string): void {
+        stdout.write(message);
+    }
+
+    private reset(task: Task): void {
+        let color = styles.yellow.open;
+
+        if (task.status === "done") color = styles.green.open;
+        else if (task.status === "failed") color = styles.red.open;
+
+        this.log(escapes.cursorLeft);
+        this.log(escapes.eraseLine);
+        this.log(color);
+    }
+
+    private padding(count = 0): void {
+        this.log(" ".repeat(count));
+    }
+
+    private newline(count = 0): void {
+        this.log("\n".repeat(count));
+    }
+
+    private up(count = 0): void {
+        this.log(escapes.cursorUp(count));
+    }
 }

@@ -14,7 +14,9 @@
         "test-watch": "vp test --watch"
     },
     "dependencies": {
-        "@commander-js/extra-typings": "^15.0.0"
+        "@commander-js/extra-typings": "^15.0.0",
+        "ansi-escapes": "^7.3.0",
+        "ansi-styles": "^7.0.0"
     },
     "devDependencies": {
         "@types/node": "latest",
