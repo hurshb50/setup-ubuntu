@@ -3,13 +3,13 @@ import os from "os";
 import path from "path";
 import type { Package } from "../package";
 import { Task } from "../task";
-import type { TaskLogger } from "../task-logger";
+import type { Logger } from "../t../logger
 import { execAsync } from "../../exec-async";
 
 export class AutoSuggestion implements Package {
     systemDependencyNames = ["xz-utils"];
 
-    async postSystemInstall(logger: TaskLogger): Promise<void> {
+    async postSystemInstall(logger: Logger): Promise<void> {
         const task = new Task("Setup Auto Suggestion");
         logger.add(task);
         task.start();

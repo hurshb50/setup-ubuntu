@@ -1,26 +1,25 @@
 import fs from "fs/promises";
-import os from "os";
 import path from "path";
-import type { Package } from "../package";
+import type { Package, InstallContext } from "../new-package";
 import { Task } from "../task";
-import type { TaskLogger } from "../task-logger";
 
 export class Wallpapers implements Package {
-    systemDependencyNames = ["hydrapaper"];
-
-    async postSystemInstall(logger: TaskLogger): Promise<void> {
-        const task = new Task("Setup Wallpapers");
-        logger.add(task);
+    async install(context: InstallContext): Promise<void> {
+        const task = new Task("Install Wallpapers");
         task.start();
+        context.logger.add(task);
 
-        const homeDirectoryPath = os.homedir();
-        const backgroundsDirectoryPath = path.join(homeDirectoryPath, ".local", "share", "backgrounds");
-        const assetsDirectoryPath = path.join(import.meta.dirname, "assets");
-        const wallpapersDirectoryPath = path.join(assetsDirectoryPath, "wallpapers");
+        task.continue("Install hydrapaper");
+        await context.packageManager.install(["hydrapaper"]);
+
         task.continue("Create backgrounds directory");
+        const backgroundsDirectoryPath = path.join(context.directories.home, ".local", "share", "backgrounds");
+        const wallpapersDirectoryPath = path.join(context.directories.assets, "wallpapers");
         await fs.mkdir(backgroundsDirectoryPath, { recursive: true });
+
         task.continue("Copy wallpapers");
         await fs.cp(wallpapersDirectoryPath, backgroundsDirectoryPath, { recursive: true });
+
         task.finish();
     }
 }

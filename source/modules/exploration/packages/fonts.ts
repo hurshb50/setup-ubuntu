@@ -3,12 +3,12 @@ import os from "os";
 import path from "path";
 import type { Package } from "../package";
 import { Task } from "../task";
-import type { TaskLogger } from "../task-logger";
+import type { Logger } from "../t../logger
 
 export class Fonts implements Package {
     systemDependencyNames = ["fontconfig"];
 
-    async postSystemInstall(logger: TaskLogger): Promise<void> {
+    async postSystemInstall(logger: Logger): Promise<void> {
         const task = new Task("Setup Fonts");
         logger.add(task);
         task.start();

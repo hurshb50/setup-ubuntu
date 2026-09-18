@@ -4,7 +4,7 @@ import escapes from "ansi-escapes";
 import { setTimeout } from "timers/promises";
 import { stdout } from "process";
 
-export class TaskLogger {
+export class Logger {
     status: "idle" | "in-progress" | "done";
     private tasks: Task[];
     private tick: number;
@@ -56,7 +56,7 @@ export class TaskLogger {
 
         const columns = stdout.columns ?? 120;
 
-        for (const task of this.tasks) {
+        for (const [taskIndex, task] of this.tasks.entries()) {
             const width = columns - 1;
             const leftText = task.name;
             const rightText = task.step ?? "";
@@ -67,18 +67,19 @@ export class TaskLogger {
             const centerPadding = Math.max(1, width - (2 + 2 + leftText.length + rightText.length));
             this.padding(centerPadding);
             this.log(rightText);
-            this.down();
+
+            if (taskIndex !== this.tasks.length - 1) this.down(1);
         }
 
-        this.up(this.tasks.length - 1);
+        if (this.tasks.length > 1) this.up(this.tasks.length - 1);
     }
 
     private dot(): void {
-        const dotIndex = this.tick % TaskLogger.dots.length;
-        const dot = TaskLogger.dots[dotIndex];
+        const dotIndex = this.tick % Logger.dots.length;
+        const dot = Logger.dots[dotIndex];
 
         if (dot === undefined) {
-            throw new Error(`Invalid index '${dotIndex}' to access dots of length '${TaskLogger.dots.length}'.`);
+            throw new Error(`Invalid index '${dotIndex}' to access dots of length '${Logger.dots.length}'.`);
         }
 
         this.log(dot);
@@ -101,7 +102,7 @@ export class TaskLogger {
     private icon(task: Task): void {
         if (task.status === "idle") this.padding(2);
         else if (task.status === "in-progress") this.dot();
-        else this.log(TaskLogger.check);
+        else this.log(Logger.check);
     }
 
     private padding(count = 1): void {

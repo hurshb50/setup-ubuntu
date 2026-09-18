@@ -1,13 +1,13 @@
 import childProcess from "node:child_process";
 import type { Package } from "./package";
 import { Task } from "./task";
-import type { TaskLogger } from "./task-logger";
+import type { Logger } from "./ta./logger
 
 export class SystemPackageManager {
     packages: Package[];
-    logger: TaskLogger;
+    logger: Logger;
 
-    constructor(packages: Package[], logger: TaskLogger) {
+    constructor(packages: Package[], logger: Logger) {
         this.packages = packages;
         this.logger = logger;
     }

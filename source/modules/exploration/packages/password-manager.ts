@@ -1,6 +1,6 @@
 import type { Package } from "../package";
 import { Task } from "../task";
-import type { TaskLogger } from "../task-logger";
+import type { Logger } from "../t../logger
 import { execAsync } from "../../exec-async";
 
 export class PasswordManager implements Package {
@@ -29,7 +29,7 @@ export class PasswordManager implements Package {
         );
     }
 
-    async postSystemInstall(logger: TaskLogger): Promise<void> {
+    async postSystemInstall(logger: Logger): Promise<void> {
         const task = new Task("Setup Password Manager");
         logger.add(task);
         task.start();
