@@ -1,15 +1,18 @@
-import type { Package } from "../package";
+import type { InstallContext, Package } from "../package";
 import { Task } from "../task";
-import type { Logger } from "../t../logger
 
 export class VersionControlSystem implements Package {
-    systemDependencyNames = ["build-essential"];
-    systemName = "git";
-
-    async postSystemInstall(logger: Logger): Promise<void> {
-        const task = new Task("Setup Version Control System");
-        logger.add(task);
+    async install(context: InstallContext): Promise<void> {
+        const task = new Task("Install Version Control System");
+        context.logger.add(task);
         task.start();
+
+        task.continue("Update package manager");
+        await context.dependencyManager.update();
+
+        const dependencies = ["git", "build-essential"];
+        task.continue(`Install dependencies: ${dependencies.join(", ")}`);
+        await context.dependencyManager.install(dependencies);
 
         task.finish();
     }
