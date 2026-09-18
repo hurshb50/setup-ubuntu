@@ -1,6 +1,6 @@
+import { execa } from "execa";
 import type { InstallContext, Package } from "../package";
 import { Task } from "../task";
-import { execAsync } from "../../exec-async";
 
 export class TerminalView implements Package {
     async install(context: InstallContext): Promise<void> {
@@ -16,7 +16,7 @@ export class TerminalView implements Package {
         await context.dependencyManager.install(dependencies, task);
 
         task.continue("Install oh-my-posh");
-        await execAsync("curl -s https://ohmyposh.dev/install.sh | bash -s");
+        await execa("curl -s https://ohmyposh.dev/install.sh | bash -s", { shell: true });
 
         task.finish();
     }

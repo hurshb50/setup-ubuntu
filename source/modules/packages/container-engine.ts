@@ -1,8 +1,8 @@
 import os from "os";
 import path from "path";
-import type { InstallContext, Package } from "../../package";
+import { execa } from "execa";
+import type { InstallContext, Package } from "../package";
 import { Task } from "../task";
-import { execAsync } from "../../exec-async";
 
 export class ContainerEngine implements Package {
     async install(context: InstallContext): Promise<void> {
@@ -22,12 +22,14 @@ export class ContainerEngine implements Package {
 
         task.continue("Set up docker sources");
 
-        await execAsync(
+        await execa(
             `curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor --yes -o ${keyringFilePath}`,
+            { shell: true },
         );
 
-        await execAsync(
+        await execa(
             `echo "deb [arch=$(dpkg --print-architecture) signed-by=${keyringFilePath}] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" | sudo tee ${sourceFilePath} > /dev/null`,
+            { shell: true },
         );
 
         task.continue("Update package manager");
@@ -45,7 +47,7 @@ export class ContainerEngine implements Package {
         await context.dependencyManager.install(dependencies, task);
 
         task.continue("Add user to docker group");
-        await execAsync(`sudo usermod --append --groups docker ${os.userInfo().username}`);
+        await execa(`sudo usermod --append --groups docker ${os.userInfo().username}`, { shell: true });
 
         task.finish();
     }

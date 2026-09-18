@@ -1,5 +1,5 @@
-import type { DependencyManager } from "../dependency-managerency-manager";
-import type { Logger } from "../loggeration/loggerr";
+import type { DependencyManager } from "./dependency-manager";
+import type { Logger } from "./logger";
 
 export interface Package {
     install: (context: InstallContext) => Promise<void>;

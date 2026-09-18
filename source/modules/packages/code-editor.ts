@@ -1,8 +1,8 @@
 import fs from "fs/promises";
 import path from "path";
-import type { InstallContext, Package } from "../../package";
+import { execa } from "execa";
+import type { InstallContext, Package } from "../package";
 import { Task } from "../task";
-import { execAsync } from "../../exec-async";
 
 export class CodeEditor implements Package {
     async install(context: InstallContext): Promise<void> {
@@ -14,7 +14,7 @@ export class CodeEditor implements Package {
         const destinationDirectoryPath = path.join(context.directories.home, ".config", "zed");
 
         task.continue("Install Zed");
-        await execAsync("curl -f https://zed.dev/install.sh | sh");
+        await execa("curl -f https://zed.dev/install.sh | sh", { shell: true });
 
         task.continue("Copy configuration");
         await fs.cp(sourceDirectoryPath, destinationDirectoryPath, { recursive: true });

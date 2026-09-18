@@ -1,5 +1,5 @@
 import { execa } from "execa";
-import type { Task } from "./exploration/task";
+import type { Task } from "./task";
 
 export class DependencyManager {
     private queue: Promise<void>;

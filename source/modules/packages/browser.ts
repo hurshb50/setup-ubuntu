@@ -1,7 +1,7 @@
 import path from "path";
+import { execa } from "execa";
 import type { InstallContext, Package } from "../package";
 import { Task } from "../task";
-import { execAsync } from "../../exec-async";
 
 export class Browser implements Package {
     async install(context: InstallContext): Promise<void> {
@@ -20,12 +20,16 @@ export class Browser implements Package {
         const sourceFilePath = path.join("/", "etc", "apt", "sources.list.d", "google-chrome.list");
 
         task.continue("Set up google chrome sources");
-        await execAsync(
+        await execa(
             `curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor --yes -o ${keyringFilePath}`,
+            {
+                shell: true,
+            },
         );
 
-        await execAsync(
+        await execa(
             `echo 'deb [arch=amd64 signed-by=${keyringFilePath}] http://dl.google.com/linux/chrome/deb/ stable main' | sudo tee ${sourceFilePath} > /dev/null`,
+            { shell: true },
         );
 
         task.continue("Update package manager");

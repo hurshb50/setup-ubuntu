@@ -1,4 +1,4 @@
-import type { Task } from "./exploration/task";
+import type { Task } from "./task";
 import styles from "ansi-styles";
 import escapes from "ansi-escapes";
 import { setTimeout } from "timers/promises";

@@ -1,9 +1,9 @@
 import fs from "fs/promises";
 import os from "os";
 import path from "path";
+import { execa } from "execa";
 import type { InstallContext, Package } from "../package";
 import { Task } from "../task";
-import { execAsync } from "../../exec-async";
 
 export class AutoSuggestion implements Package {
     async install(context: InstallContext): Promise<void> {
@@ -26,12 +26,13 @@ export class AutoSuggestion implements Package {
 
         task.continue("Download ble.sh");
 
-        await execAsync(
+        await execa(
             `curl -L https://github.com/akinomyoga/ble.sh/releases/download/nightly/ble-nightly.tar.xz | tar xJf - -C ${temporaryDirectoryPath}`,
+            { shell: true },
         );
 
         task.continue("Install ble.sh");
-        await execAsync(`bash ${installationFilePath} --install ${destinationDirectoryPath}`);
+        await execa(`bash ${installationFilePath} --install ${destinationDirectoryPath}`, { shell: true });
 
         task.continue("Remove temporary directory");
         await fs.rm(temporaryDirectoryPath, { recursive: true });
