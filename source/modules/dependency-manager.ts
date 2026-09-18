@@ -20,7 +20,10 @@ export class DependencyManager {
 
     private enqueue(managerArguments: string[], task: Task): Promise<void> {
         const operation = this.queue.then(async () => {
-            const subprocess = execa("sudo", ["apt-get", ...managerArguments]);
+            const sudoEnvironment = ["DEBIAN_FRONTEND=noninteractive", "NEEDRESTART_SUSPEND=1"];
+            const subprocess = execa("sudo", ["env", ...sudoEnvironment, "apt-get", ...managerArguments], {
+                stdin: "ignore",
+            });
             let partial = "";
 
             subprocess.stdout?.on("data", (chunk: Buffer) => {
