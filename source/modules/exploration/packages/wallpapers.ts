@@ -1,13 +1,13 @@
 import fs from "fs/promises";
 import path from "path";
-import type { Package, InstallContext } from "../package";
+import type { InstallContext, Package } from "../package";
 import { Task } from "../task";
 
 export class Wallpapers implements Package {
     async install(context: InstallContext): Promise<void> {
-        const task = new Task("Install Wallpapers");
-        task.start();
+        const task = new Task("Wallpapers");
         context.logger.add(task);
+        task.start();
 
         task.continue("Update package manager");
         await context.dependencyManager.update();
@@ -16,13 +16,14 @@ export class Wallpapers implements Package {
         task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
         await context.dependencyManager.install(dependencies);
 
+        const sourceDirectoryPath = path.join(context.directories.assets, "wallpapers");
+        const destinationDirectoryPath = path.join(context.directories.home, ".local", "share", "backgrounds");
+
         task.continue("Create backgrounds directory");
-        const backgroundsDirectoryPath = path.join(context.directories.home, ".local", "share", "backgrounds");
-        const wallpapersDirectoryPath = path.join(context.directories.assets, "wallpapers");
-        await fs.mkdir(backgroundsDirectoryPath, { recursive: true });
+        await fs.mkdir(destinationDirectoryPath, { recursive: true });
 
         task.continue("Copy wallpapers");
-        await fs.cp(wallpapersDirectoryPath, backgroundsDirectoryPath, { recursive: true });
+        await fs.cp(sourceDirectoryPath, destinationDirectoryPath, { recursive: true });
 
         task.finish();
     }

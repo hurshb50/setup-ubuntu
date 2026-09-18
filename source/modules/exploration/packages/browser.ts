@@ -1,26 +1,39 @@
-import type { Package } from "../package";
+import path from "path";
+import type { InstallContext, Package } from "../package";
 import { Task } from "../task";
-import type { Logger } from "../t../logger
 import { execAsync } from "../../exec-async";
 
 export class Browser implements Package {
-    systemDependencyNames = ["gnupg"];
-    systemName = "google-chrome-stable";
-
-    async setupSystemSources(): Promise<void> {
-        await execAsync(
-            "curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor --yes -o /usr/share/keyrings/google-chrome.gpg",
-        );
-
-        await execAsync(
-            "echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main' | sudo tee /etc/apt/sources.list.d/google-chrome.list > /dev/null",
-        );
-    }
-
-    async postSystemInstall(logger: Logger): Promise<void> {
-        const task = new Task("Setup Browser");
-        logger.add(task);
+    async install(context: InstallContext): Promise<void> {
+        const task = new Task("Browser");
+        context.logger.add(task);
         task.start();
+
+        task.continue("Update package manager");
+        await context.dependencyManager.update();
+
+        const systemDependencies = ["gnupg"];
+        task.continue(`Installing dependencies: ${systemDependencies.join(", ")}`);
+        await context.dependencyManager.install(systemDependencies);
+
+        const keyringFilePath = path.join("/", "usr", "share", "keyrings", "google-chrome.gpg");
+        const sourceFilePath = path.join("/", "etc", "apt", "sources.list.d", "google-chrome.list");
+
+        task.continue("Set up google chrome sources");
+        await execAsync(
+            `curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor --yes -o ${keyringFilePath}`,
+        );
+
+        await execAsync(
+            `echo 'deb [arch=amd64 signed-by=${keyringFilePath}] http://dl.google.com/linux/chrome/deb/ stable main' | sudo tee ${sourceFilePath} > /dev/null`,
+        );
+
+        task.continue("Update package manager");
+        await context.dependencyManager.update();
+
+        const dependencies = ["google-chrome-stable"];
+        task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
+        await context.dependencyManager.install(dependencies);
 
         task.finish();
     }

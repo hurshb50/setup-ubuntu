@@ -4,7 +4,7 @@ import { execAsync } from "../../exec-async";
 
 export class TerminalView implements Package {
     async install(context: InstallContext): Promise<void> {
-        const task = new Task("Install Terminal View");
+        const task = new Task("Terminal View");
         context.logger.add(task);
         task.start();
 

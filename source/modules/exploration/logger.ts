@@ -37,6 +37,10 @@ export class Logger {
     private async loop(): Promise<void> {
         const minimumIntervalMilliSeconds = 80;
 
+        this.newline();
+        this.banner("Ubuntu Setup");
+        this.newline();
+
         while (this.status === "in-progress") {
             const start = performance.now();
             this.write();
@@ -48,7 +52,11 @@ export class Logger {
         }
 
         this.write();
-        this.newline(this.tasks.length);
+        this.newline(this.tasks.length + 1);
+
+        this.log(styles.blue.open);
+        this.banner("Setup complete!");
+        this.newline();
     }
 
     private write(): void {
@@ -119,5 +127,29 @@ export class Logger {
 
     private down(count = 1): void {
         this.log(escapes.cursorDown(count));
+    }
+
+    private banner(title: string): void {
+        const columns = stdout.columns ?? 120;
+        const width = Math.max(4, columns - 2);
+        const text = ` ${title} `;
+        const remaining = Math.max(0, width - text.length);
+        const leftPadding = Math.floor(remaining / 2);
+        const rightPadding = remaining - leftPadding;
+        const leftText = " ".repeat(leftPadding) + text + " ".repeat(rightPadding);
+        const top = `╭${"─".repeat(width)}╮`;
+        const middle = `${styles.bold.open}│${leftText}│${styles.bold.close}`;
+        const bottom = `╰${"─".repeat(width)}╯`;
+
+        this.log(escapes.cursorLeft);
+        this.log(escapes.eraseLine);
+        this.log(top);
+        this.newline();
+        this.log(escapes.cursorLeft);
+        this.log(middle);
+        this.newline();
+        this.log(escapes.cursorLeft);
+        this.log(bottom);
+        this.newline();
     }
 }

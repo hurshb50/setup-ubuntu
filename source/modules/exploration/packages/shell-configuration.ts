@@ -1,23 +1,19 @@
 import fs from "fs/promises";
-import os from "os";
 import path from "path";
-import type { Package } from "../package";
+import type { InstallContext, Package } from "../package";
 import { Task } from "../task";
-import type { Logger } from "../t../logger
 
 export class ShellConfiguration implements Package {
-    async postSystemInstall(logger: Logger): Promise<void> {
-        const task = new Task("Setup Shell Configuration");
-        logger.add(task);
+    async install(context: InstallContext): Promise<void> {
+        const task = new Task("Shell Configuration");
+        context.logger.add(task);
         task.start();
 
-        const homeDirectoryPath = os.homedir();
-        const homeShellConfigurationFilePath = path.join(homeDirectoryPath, ".bashrc");
-        const assetsDirectoryPath = path.join(import.meta.dirname, "assets");
-        const sourceShellConfigurationPath = path.join(assetsDirectoryPath, ".bashrc");
+        const sourceFilePath = path.join(context.directories.assets, ".bashrc");
+        const destinationFilePath = path.join(context.directories.home, ".bashrc");
 
         task.continue("Copy shell configuration");
-        await fs.copyFile(sourceShellConfigurationPath, homeShellConfigurationFilePath);
+        await fs.copyFile(sourceFilePath, destinationFilePath);
 
         task.finish();
     }

@@ -3,7 +3,7 @@ import { Task } from "../task";
 
 export class VersionControlSystem implements Package {
     async install(context: InstallContext): Promise<void> {
-        const task = new Task("Install Version Control System");
+        const task = new Task("Version Control System");
         context.logger.add(task);
         task.start();
 

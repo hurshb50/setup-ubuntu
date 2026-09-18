@@ -6,9 +6,20 @@ import { name, version } from "../package.json";
 import { Logger } from "./modules/exploration/logger";
 import type { Package } from "./modules/exploration/package";
 import { DependencyManager } from "./modules/exploration/dependency-manager";
-import { Wallpapers } from "./modules/exploration/packages/wallpapers";
-import { VersionControlSystem } from "./modules/exploration/packages/version-control-system";
+import { AgentRules } from "./modules/exploration/packages/agent-rules";
+import { AgentSkills } from "./modules/exploration/packages/agent-skills";
+import { AutoSuggestion } from "./modules/exploration/packages/auto-suggestion";
+import { Browser } from "./modules/exploration/packages/browser";
+import { CodeEditor } from "./modules/exploration/packages/code-editor";
+import { ContainerEngine } from "./modules/exploration/packages/container-engine";
+import { Fonts } from "./modules/exploration/packages/fonts";
+import { FuzzyFinder } from "./modules/exploration/packages/fuzzy-finder";
+import { PasswordManager } from "./modules/exploration/packages/password-manager";
+import { ShellConfiguration } from "./modules/exploration/packages/shell-configuration";
+import { SmartChangeDirectory } from "./modules/exploration/packages/smart-change-directory";
 import { TerminalView } from "./modules/exploration/packages/terminal-view";
+import { VersionControlSystem } from "./modules/exploration/packages/version-control-system";
+import { Wallpapers } from "./modules/exploration/packages/wallpapers";
 
 program
     .name(name)
@@ -19,7 +30,22 @@ program
         const dependencyManager = new DependencyManager();
         logger.start();
 
-        const packages: Package[] = [new TerminalView(), new VersionControlSystem(), new Wallpapers()];
+        const packages: Package[] = [
+            new AgentRules(),
+            new AgentSkills(),
+            new AutoSuggestion(),
+            new Browser(),
+            new CodeEditor(),
+            new ContainerEngine(),
+            new Fonts(),
+            new FuzzyFinder(),
+            new PasswordManager(),
+            new ShellConfiguration(),
+            new SmartChangeDirectory(),
+            new TerminalView(),
+            new VersionControlSystem(),
+            new Wallpapers(),
+        ];
 
         try {
             const directories = {

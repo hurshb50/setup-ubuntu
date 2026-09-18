@@ -1,24 +1,30 @@
 import fs from "fs/promises";
-import os from "os";
 import path from "path";
-import type { Package } from "../package";
+import type { InstallContext, Package } from "../package";
 import { Task } from "../task";
-import type { Logger } from "../t../logger
 
 export class Fonts implements Package {
-    systemDependencyNames = ["fontconfig"];
-
-    async postSystemInstall(logger: Logger): Promise<void> {
-        const task = new Task("Setup Fonts");
-        logger.add(task);
+    async install(context: InstallContext): Promise<void> {
+        const task = new Task("Fonts");
+        context.logger.add(task);
         task.start();
 
-        const fontsDirectoryPath = path.join(import.meta.dirname, "assets", "fonts");
-        const systemFontsDirectoryPath = path.join(os.homedir(), ".local", "share", "fonts");
+        task.continue("Update package manager");
+        await context.dependencyManager.update();
+
+        const dependencies = ["fontconfig"];
+        task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
+        await context.dependencyManager.install(dependencies);
+
+        const sourceDirectoryPath = path.join(context.directories.assets, "fonts");
+        const destinationDirectoryPath = path.join(context.directories.home, ".local", "share", "fonts");
+
         task.continue("Create fonts directory");
-        await fs.mkdir(systemFontsDirectoryPath, { recursive: true });
+        await fs.mkdir(destinationDirectoryPath, { recursive: true });
+
         task.continue("Copy fonts");
-        await fs.cp(fontsDirectoryPath, systemFontsDirectoryPath, { recursive: true });
+        await fs.cp(sourceDirectoryPath, destinationDirectoryPath, { recursive: true });
+
         task.finish();
     }
 }
