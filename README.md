@@ -1,59 +1,17 @@
 # setup-ubuntu
 
+Sets up a fresh Ubuntu machine with a standard set of tools, configuration, and dotfiles.
+
+## Installation
+
+```bash
+sudo apt update && sudo apt install -y curl ca-certificates
+curl -fsSL https://vite.plus | bash
+vpx @hurshb50/setup-ubuntu
+```
+
 ## Publishing
 
-The repo includes two GitHub Actions workflows.
+Run the `publish.yaml` workflow from the Actions tab, choosing `patch`, `minor`, or `major` for the version bump. CI checks, tests, builds, bumps the version, tags it, and stages the package on npm. It uses OIDC trusted publishing, so no npm token is needed.
 
-- `publish.yaml` checks, tests, builds, bumps the version, tags it, and stages the package on npm.
-- `release.yaml` publishes a GitHub release once the version is live.
-
-CI uses npm's OIDC trusted publishing and staged publishing. No npm token. Nothing goes live until you approve it with 2FA.
-
-## One-time setup
-
-1. Push the repo to GitHub. Run `gh auth login` first if needed.
-
-    ```bash
-    git init -b main
-    git add .
-    git commit -m "Initial commit"
-    gh repo create setup-ubuntu --public --source . --remote origin --push
-    ```
-
-2. Log in to npm.
-
-    ```bash
-    vp pm login
-    ```
-
-3. Publish the first version manually. npm cannot stage a new package.
-
-    ```bash
-    vp pm publish
-    ```
-
-    This publishes 0.0.0. Later releases go through CI.
-
-4. Allow GitHub Actions to publish. In the package settings on npmjs.com, add a GitHub Actions trusted publisher.
-
-    - Organization or user: `hurshb50`
-    - Repository: `setup-ubuntu`
-    - Workflow filename: `publish.yaml`
-    - Allowed actions: staged publishing only
-
-5. Optional: in package settings under Publishing access, set "Require two-factor authentication and disallow tokens". CI still works through OIDC.
-
-## Releasing a version
-
-```bash
-gh workflow run publish.yaml -f bump=patch
-```
-
-Use `minor` or `major` instead of `patch` when it fits. Then approve the staged package.
-
-```bash
-vp pm stage list
-vp pm stage approve <stage-id>
-```
-
-You can also approve on npmjs.com under Staged Packages. The Release workflow creates the GitHub release on its weekly run. Run `gh workflow run release.yaml` to do it now.
+Nothing goes live until you approve the staged package on npmjs.com under Staged Packages. The `release.yaml` workflow creates the GitHub release once the version is live.
