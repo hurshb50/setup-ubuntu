@@ -10,15 +10,19 @@ export class TerminalView implements Package {
         context.logger.add(task);
         task.start();
 
-        task.continue("Update package manager");
-        await context.dependencyManager.update(task);
+        const commandExists = await context.dependencyManager.commandExists("oh-my-posh");
 
-        const dependencies = ["unzip"];
-        task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
-        await context.dependencyManager.install(dependencies, task);
+        if (!commandExists) {
+            task.continue("Update package manager");
+            await context.dependencyManager.update(task);
 
-        task.continue("Install oh-my-posh");
-        await execa("curl -s https://ohmyposh.dev/install.sh | bash -s", { shell: true });
+            const dependencies = ["unzip"];
+            task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
+            await context.dependencyManager.install(dependencies, task);
+
+            task.continue("Install oh-my-posh");
+            await execa("curl -s https://ohmyposh.dev/install.sh | bash -s", { shell: true });
+        }
 
         const sourceFilePath = path.join(context.directories.assets, "oh-my-posh.toml");
         const destinationDirectoryPath = path.join(context.directories.home, ".config", "oh-my-posh");

@@ -7,10 +7,17 @@ export class FuzzyFinder implements Package {
         context.logger.add(task);
         task.start();
 
+        const dependencies = ["fzf"];
+        const isInstalled = await context.dependencyManager.isInstalled(dependencies);
+
+        if (isInstalled) {
+            task.finish();
+            return;
+        }
+
         task.continue("Update package manager");
         await context.dependencyManager.update(task);
 
-        const dependencies = ["fzf"];
         task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
         await context.dependencyManager.install(dependencies, task);
 

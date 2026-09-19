@@ -7,10 +7,17 @@ export class SmartChangeDirectory implements Package {
         context.logger.add(task);
         task.start();
 
+        const dependencies = ["zoxide"];
+        const isInstalled = await context.dependencyManager.isInstalled(dependencies);
+
+        if (isInstalled) {
+            task.finish();
+            return;
+        }
+
         task.continue("Update package manager");
         await context.dependencyManager.update(task);
 
-        const dependencies = ["zoxide"];
         task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
         await context.dependencyManager.install(dependencies, task);
 

@@ -11,31 +11,37 @@ export class AutoSuggestion implements Package {
         context.logger.add(task);
         task.start();
 
-        task.continue("Update package manager");
-        await context.dependencyManager.update(task);
-
-        const dependencies = ["xz-utils"];
-        task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
-        await context.dependencyManager.install(dependencies, task);
-
-        const temporaryDirectoryPath = await fs.mkdtemp(path.join(os.tmpdir(), "ble.sh"));
-        const installationFilePath = path.join(temporaryDirectoryPath, "ble-nightly", "ble.sh");
         const destinationDirectoryPath = path.join(context.directories.home, ".local", "share");
+        const installedFilePath = path.join(destinationDirectoryPath, "blesh", "ble.sh");
         const sourceFilePath = path.join(context.directories.assets, ".blerc");
         const destinationFilePath = path.join(context.directories.home, ".blerc");
+        const statistics = await fs.stat(installedFilePath, { throwIfNoEntry: false });
+        const isInstalled = statistics !== undefined;
 
-        task.continue("Download ble.sh");
+        if (!isInstalled) {
+            task.continue("Update package manager");
+            await context.dependencyManager.update(task);
 
-        await execa(
-            `curl -L https://github.com/akinomyoga/ble.sh/releases/download/nightly/ble-nightly.tar.xz | tar xJf - -C ${temporaryDirectoryPath}`,
-            { shell: true },
-        );
+            const dependencies = ["xz-utils"];
+            task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
+            await context.dependencyManager.install(dependencies, task);
 
-        task.continue("Install ble.sh");
-        await execa(`bash ${installationFilePath} --install ${destinationDirectoryPath}`, { shell: true });
+            const temporaryDirectoryPath = await fs.mkdtemp(path.join(os.tmpdir(), "ble.sh"));
+            const installationFilePath = path.join(temporaryDirectoryPath, "ble-nightly", "ble.sh");
 
-        task.continue("Remove temporary directory");
-        await fs.rm(temporaryDirectoryPath, { recursive: true });
+            task.continue("Download ble.sh");
+
+            await execa(
+                `curl -L https://github.com/akinomyoga/ble.sh/releases/download/nightly/ble-nightly.tar.xz | tar xJf - -C ${temporaryDirectoryPath}`,
+                { shell: true },
+            );
+
+            task.continue("Install ble.sh");
+            await execa(`bash ${installationFilePath} --install ${destinationDirectoryPath}`, { shell: true });
+
+            task.continue("Remove temporary directory");
+            await fs.rm(temporaryDirectoryPath, { recursive: true });
+        }
 
         task.continue("Copy configuration");
         await fs.copyFile(sourceFilePath, destinationFilePath);

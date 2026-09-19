@@ -14,7 +14,11 @@ export class CodeEditor implements Package {
         const destinationDirectoryPath = path.join(context.directories.home, ".config", "zed");
 
         task.continue("Install Zed");
-        await execa("curl -f https://zed.dev/install.sh | sh", { shell: true });
+        const commandExists = await context.dependencyManager.commandExists("zed");
+
+        if (!commandExists) {
+            await execa("curl -f https://zed.dev/install.sh | sh", { shell: true });
+        }
 
         task.continue("Copy configuration");
         await fs.cp(sourceDirectoryPath, destinationDirectoryPath, { recursive: true });

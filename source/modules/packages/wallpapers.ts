@@ -9,12 +9,16 @@ export class Wallpapers implements Package {
         context.logger.add(task);
         task.start();
 
-        task.continue("Update package manager");
-        await context.dependencyManager.update(task);
-
         const dependencies = ["hydrapaper"];
-        task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
-        await context.dependencyManager.install(dependencies, task);
+        const isInstalled = await context.dependencyManager.isInstalled(dependencies);
+
+        if (!isInstalled) {
+            task.continue("Update package manager");
+            await context.dependencyManager.update(task);
+
+            task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
+            await context.dependencyManager.install(dependencies, task);
+        }
 
         const sourceDirectoryPath = path.join(context.directories.assets, "wallpapers");
         const destinationDirectoryPath = path.join(context.directories.home, ".local", "share", "backgrounds");
