@@ -11,6 +11,7 @@ import { AgentSkills } from "./modules/packages/agent-skills";
 import { AutoSuggestion } from "./modules/packages/auto-suggestion";
 import { Browser } from "./modules/packages/browser";
 import { CodeEditor } from "./modules/packages/code-editor";
+import { CodeHost } from "./modules/packages/code-host";
 import { ContainerEngine } from "./modules/packages/container-engine";
 import { Fonts } from "./modules/packages/fonts";
 import { FuzzyFinder } from "./modules/packages/fuzzy-finder";
@@ -36,6 +37,7 @@ program
             new AutoSuggestion(),
             new Browser(),
             new CodeEditor(),
+            new CodeHost(),
             new ContainerEngine(),
             new Fonts(),
             new FuzzyFinder(),
