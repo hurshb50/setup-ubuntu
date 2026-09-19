@@ -9,6 +9,14 @@ export class Browser implements Package {
         context.logger.add(task);
         task.start();
 
+        const dependencies = ["google-chrome-stable"];
+        const isInstalled = await context.dependencyManager.isInstalled(dependencies);
+
+        if (isInstalled) {
+            task.finish();
+            return;
+        }
+
         task.continue("Update package manager");
         await context.dependencyManager.update(task);
 
@@ -35,7 +43,6 @@ export class Browser implements Package {
         task.continue("Update package manager");
         await context.dependencyManager.update(task);
 
-        const dependencies = ["google-chrome-stable"];
         task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
         await context.dependencyManager.install(dependencies, task);
 

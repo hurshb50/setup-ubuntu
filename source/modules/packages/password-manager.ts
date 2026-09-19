@@ -9,6 +9,14 @@ export class PasswordManager implements Package {
         context.logger.add(task);
         task.start();
 
+        const dependencies = ["1password"];
+        const isInstalled = await context.dependencyManager.isInstalled(dependencies);
+
+        if (isInstalled) {
+            task.finish();
+            return;
+        }
+
         task.continue("Update package manager");
         await context.dependencyManager.update(task);
 
@@ -54,7 +62,6 @@ export class PasswordManager implements Package {
         task.continue("Update package manager");
         await context.dependencyManager.update(task);
 
-        const dependencies = ["1password"];
         task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
         await context.dependencyManager.install(dependencies, task);
 

@@ -1,3 +1,6 @@
+import fs from "fs/promises";
+import os from "os";
+import path from "path";
 import { execa } from "execa";
 import type { Task } from "./task";
 
@@ -13,7 +16,9 @@ export class DependencyManager {
             await execa("command", ["-v", command], { shell: true, stdin: "ignore" });
             return true;
         } catch {
-            return false;
+            const commandFilePath = path.join(os.homedir(), ".local", "bin", command);
+            const statistics = await fs.stat(commandFilePath, { throwIfNoEntry: false });
+            return statistics !== undefined;
         }
     }
 
