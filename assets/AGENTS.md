@@ -22,7 +22,9 @@ Bold at most one phrase per reply.
 Write the point once. No "not just X, but Y", no padding a list to three, and no
 bullet whose lead-in restates its own line.
 
-Terse means fewer sentences, not broken ones. Keep the articles and the verbs.
+Terse means fewer sentences, not denser ones. Keep the articles and the verbs.
+
+Keep one idea per sentence, most of them under 15 words. Split anything past 20.
 
 # Formatting
 
