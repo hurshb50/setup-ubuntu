@@ -1,0 +1,61 @@
+console_title_template = '{{ .Folder }}'
+version = 3
+final_space = true
+
+[[blocks]]
+  type = 'prompt'
+  alignment = 'left'
+  newline = true
+
+  [[blocks.segments]]
+    style = 'diamond'
+    template = ' {{ .Path }} '
+    foreground = '#000000'
+    background = 'blue'
+    type = 'path'
+
+    [blocks.segments.properties]
+      folder_icon = '󰉕 '
+      folder_separator_icon = ' / '
+      home_icon = ' '
+      max_depth = 2
+      style = 'agnoster_short'
+
+  [[blocks.segments]]
+    style = 'plain'
+    template = ' {{ if or (.Working.Changed) (.Staging.Changed)  }}{{ .HEAD }}  {{ else }}{{ .HEAD }}{{ end }}'
+    foreground = 'yellow'
+    background = 'transparent'
+    type = 'git'
+
+    [blocks.segments.properties]
+      branch_icon = ''
+      fetch_status = true
+
+[[blocks]]
+  type = 'prompt'
+  alignment = 'right'
+  overflow = 'hidden'
+
+  [[blocks.segments]]
+    style = 'plain'
+    template = ' {{ .FormattedMs }}  '
+    foreground = '#000000'
+    background = 'lightRed'
+    type = 'executiontime'
+
+    [blocks.segments.properties]
+      always_enabled = true
+      style = 'roundrock'
+
+[[blocks]]
+  type = 'prompt'
+  alignment = 'left'
+  newline = true
+
+  [[blocks.segments]]
+    style = 'plain'
+    template = ' '
+    foreground = 'green'
+    background = 'transparent'
+    type = 'text'
