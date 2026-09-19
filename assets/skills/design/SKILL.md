@@ -20,6 +20,8 @@ Some decisions depend on others. Ask the unblocked ones now and leave the rest f
 
 When a question lands better as an example than as prose, add one: a short snippet of a caller using each option, a sketch of the types, or a diagram of the flow. Keep it small and illustrative. This is not meant to represent the final design.
 
+One option per line, each labeled, never run together in a paragraph. Assume I have not read the code you are asking about: name each option by what it does, and quote the signature, variable, or line it turns on, so I can judge it without opening the file.
+
 Put every unblocked question in one round, numbered, each with your recommended answer and whatever example it needs. Then stop and wait for mine.
 
 Do not ask me for facts. Look them up, then ask me only what needs my judgement.
