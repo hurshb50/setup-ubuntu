@@ -54,10 +54,6 @@ export class Logger {
 
         this.write();
         this.newline(this.tasks.length + 1);
-
-        this.log(styles.blue.open);
-        this.banner("Setup complete!");
-        this.newline();
     }
 
     private write(): void {
@@ -152,9 +148,10 @@ export class Logger {
         const rightPadding = remaining - leftPadding;
         const leftText = " ".repeat(leftPadding) + text + " ".repeat(rightPadding);
         const top = `╭${"─".repeat(width)}╮`;
-        const middle = `${styles.bold.open}│${leftText}│${styles.bold.close}`;
+        const middle = `│${styles.bold.open}${styles.white.open}${leftText}${styles.white.close}${styles.bold.close}${styles.blue.open}│`;
         const bottom = `╰${"─".repeat(width)}╯`;
 
+        this.log(styles.blue.open);
         this.log(escapes.cursorLeft);
         this.log(escapes.eraseLine);
         this.log(top);
@@ -164,6 +161,7 @@ export class Logger {
         this.newline();
         this.log(escapes.cursorLeft);
         this.log(bottom);
+        this.log(styles.blue.close);
         this.newline();
     }
 }
