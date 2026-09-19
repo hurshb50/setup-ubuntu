@@ -54,6 +54,7 @@ export class Logger {
 
         this.write();
         this.newline(this.tasks.length + 1);
+        this.log(styles.reset.close);
     }
 
     private write(): void {
