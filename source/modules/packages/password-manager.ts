@@ -24,8 +24,9 @@ export class PasswordManager implements Package {
         const debsigKeyringFilePath = path.join(debsigKeyringDirectoryPath, "debsig.gpg");
 
         task.continue("Set up 1password sources");
+
         await execa(
-            `curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output ${keyringFilePath}`,
+            `curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --yes --output ${keyringFilePath}`,
             { shell: true },
         );
 
@@ -46,7 +47,7 @@ export class PasswordManager implements Package {
         await execa(`sudo mkdir -p ${debsigKeyringDirectoryPath}`, { shell: true });
 
         await execa(
-            `curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output ${debsigKeyringFilePath}`,
+            `curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --yes --output ${debsigKeyringFilePath}`,
             { shell: true },
         );
 

@@ -8,6 +8,15 @@ export class DependencyManager {
         this.queue = Promise.resolve();
     }
 
+    async commandExists(command: string): Promise<boolean> {
+        try {
+            await execa("command", ["-v", command], { shell: true, stdin: "ignore" });
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
     async install(dependencies: string[], task: Task): Promise<void> {
         const operation = this.enqueue(["install", "-y", "--no-install-recommends", ...dependencies], task);
         await operation;
