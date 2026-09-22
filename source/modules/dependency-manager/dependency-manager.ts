@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import os from "os";
 import path from "path";
 import { execa } from "execa";
-import type { Task } from "./task";
+import type { Task } from "../task/task";
 
 export class DependencyManager {
     private queue: Promise<void>;

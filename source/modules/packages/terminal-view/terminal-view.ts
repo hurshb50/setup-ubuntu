@@ -1,8 +1,8 @@
 import fs from "fs/promises";
 import path from "path";
 import { execa } from "execa";
-import type { InstallContext, Package } from "../package";
-import { Task } from "../task";
+import type { InstallContext, Package } from "../../package/package";
+import { Task } from "../../task/task";
 
 export class TerminalView implements Package {
     async install(context: InstallContext): Promise<void> {

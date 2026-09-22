@@ -5,7 +5,6 @@ RUN vp install
 COPY --parents tsconfig.json vite.config.ts assets source ./
 RUN vp run build && vp pm pack
 
-
 FROM ubuntu:24.04 AS ubuntu
 SHELL ["/bin/bash", "-c"]
 ENV SHELL=/bin/bash
@@ -23,6 +22,7 @@ USER user
 RUN curl -fsSL https://vite.plus | bash
 ENV PATH="/home/user/.local/share/vite-plus/bin:${PATH}"
 WORKDIR /home/user
-COPY --from=build --chown=user:user /build/*.tgz ./package.tgz
+COPY --from=build --chown=user:user /build .
+RUN mv *.tgz package.tgz
 
 CMD [ "vpx", "./package.tgz" ]
