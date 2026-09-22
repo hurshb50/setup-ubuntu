@@ -23,4 +23,4 @@ ENV PATH="/home/user/.local/share/vite-plus/bin:${PATH}"
 WORKDIR /home/user
 COPY --from=setup-ubuntu --chown=user:user /setup-ubuntu .
 
-CMD [ "ls" ]
+CMD [ "vp", "test", "--project", "integration" ]

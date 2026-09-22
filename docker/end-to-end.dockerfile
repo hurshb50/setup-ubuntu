@@ -25,4 +25,4 @@ WORKDIR /home/user
 COPY --from=build --chown=user:user /build .
 RUN mv *.tgz package.tgz
 
-CMD [ "vpx", "./package.tgz" ]
+CMD [ "vp", "test", "--project", "end-to-end" ]
