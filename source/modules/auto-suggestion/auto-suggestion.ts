@@ -2,8 +2,8 @@ import fs from "fs/promises";
 import os from "os";
 import path from "path";
 import { execa } from "execa";
-import type { InstallContext, Package } from "../../package/package";
-import { Task } from "../../task/task";
+import type { InstallContext, Package } from "../package/package";
+import { Task } from "../task/task";
 
 export class AutoSuggestion implements Package {
     async install(context: InstallContext): Promise<void> {

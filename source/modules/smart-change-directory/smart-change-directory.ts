@@ -1,13 +1,13 @@
-import type { InstallContext, Package } from "../../package/package";
-import { Task } from "../../task/task";
+import type { InstallContext, Package } from "../package/package";
+import { Task } from "../task/task";
 
-export class FuzzyFinder implements Package {
+export class SmartChangeDirectory implements Package {
     async install(context: InstallContext): Promise<void> {
-        const task = new Task("Fuzzy Finder");
+        const task = new Task("Smart Change Directory");
         context.logger.add(task);
         task.start();
 
-        const dependencies = ["fzf"];
+        const dependencies = ["zoxide"];
         const isInstalled = await context.dependencyManager.isInstalled(dependencies);
 
         if (isInstalled) {

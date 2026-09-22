@@ -1,13 +1,13 @@
-import type { InstallContext, Package } from "../../package/package";
-import { Task } from "../../task/task";
+import type { InstallContext, Package } from "../package/package";
+import { Task } from "../task/task";
 
-export class VersionControlSystem implements Package {
+export class FuzzyFinder implements Package {
     async install(context: InstallContext): Promise<void> {
-        const task = new Task("Version Control System");
+        const task = new Task("Fuzzy Finder");
         context.logger.add(task);
         task.start();
 
-        const dependencies = ["git", "build-essential"];
+        const dependencies = ["fzf"];
         const isInstalled = await context.dependencyManager.isInstalled(dependencies);
 
         if (isInstalled) {

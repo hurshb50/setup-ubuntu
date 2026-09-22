@@ -1,15 +1,15 @@
 import fs from "fs/promises";
 import path from "path";
-import type { InstallContext, Package } from "../../package/package";
-import { Task } from "../../task/task";
+import type { InstallContext, Package } from "../package/package";
+import { Task } from "../task/task";
 
-export class Fonts implements Package {
+export class Wallpapers implements Package {
     async install(context: InstallContext): Promise<void> {
-        const task = new Task("Fonts");
+        const task = new Task("Wallpapers");
         context.logger.add(task);
         task.start();
 
-        const dependencies = ["fontconfig"];
+        const dependencies = ["hydrapaper"];
         const isInstalled = await context.dependencyManager.isInstalled(dependencies);
 
         if (!isInstalled) {
@@ -20,13 +20,13 @@ export class Fonts implements Package {
             await context.dependencyManager.install(dependencies, task);
         }
 
-        const sourceDirectoryPath = path.join(context.directories.assets, "fonts");
-        const destinationDirectoryPath = path.join(context.directories.home, ".local", "share", "fonts");
+        const sourceDirectoryPath = path.join(context.directories.assets, "wallpapers");
+        const destinationDirectoryPath = path.join(context.directories.home, ".local", "share", "backgrounds");
 
-        task.continue("Create fonts directory");
+        task.continue("Create backgrounds directory");
         await fs.mkdir(destinationDirectoryPath, { recursive: true });
 
-        task.continue("Copy fonts");
+        task.continue("Copy wallpapers");
         await fs.cp(sourceDirectoryPath, destinationDirectoryPath, { recursive: true });
 
         task.finish();

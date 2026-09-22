@@ -6,21 +6,21 @@ import { name, version } from "../package.json";
 import { Logger } from "./modules/logger/logger";
 import type { Package } from "./modules/package/package";
 import { DependencyManager } from "./modules/dependency-manager/dependency-manager";
-import { AgentRules } from "./modules/packages/agent-rules/agent-rules";
-import { AgentSkills } from "./modules/packages/agent-skills/agent-skills";
-import { AutoSuggestion } from "./modules/packages/auto-suggestion/auto-suggestion";
-import { Browser } from "./modules/packages/browser/browser";
-import { CodeEditor } from "./modules/packages/code-editor/code-editor";
-import { CodeHost } from "./modules/packages/code-host/code-host";
-import { ContainerEngine } from "./modules/packages/container-engine/container-engine";
-import { Fonts } from "./modules/packages/fonts/fonts";
-import { FuzzyFinder } from "./modules/packages/fuzzy-finder/fuzzy-finder";
-import { PasswordManager } from "./modules/packages/password-manager/password-manager";
-import { ShellConfiguration } from "./modules/packages/shell-configuration/shell-configuration";
-import { SmartChangeDirectory } from "./modules/packages/smart-change-directory/smart-change-directory";
-import { TerminalView } from "./modules/packages/terminal-view/terminal-view";
-import { VersionControlSystem } from "./modules/packages/version-control-system/version-control-system";
-import { Wallpapers } from "./modules/packages/wallpapers/wallpapers";
+import { AgentRules } from "./modules/agent-rules/agent-rules";
+import { AgentSkills } from "./modules/agent-skills/agent-skills";
+import { AutoSuggestion } from "./modules/auto-suggestion/auto-suggestion";
+import { Browser } from "./modules/browser/browser";
+import { CodeEditor } from "./modules/code-editor/code-editor";
+import { CodeHost } from "./modules/code-host/code-host";
+import { ContainerEngine } from "./modules/container-engine/container-engine";
+import { Fonts } from "./modules/fonts/fonts";
+import { FuzzyFinder } from "./modules/fuzzy-finder/fuzzy-finder";
+import { PasswordManager } from "./modules/password-manager/password-manager";
+import { ShellConfiguration } from "./modules/shell-configuration/shell-configuration";
+import { SmartChangeDirectory } from "./modules/smart-change-directory/smart-change-directory";
+import { TerminalView } from "./modules/terminal-view/terminal-view";
+import { VersionControlSystem } from "./modules/version-control-system/version-control-system";
+import { Wallpapers } from "./modules/wallpapers/wallpapers";
 
 program
     .name(name)

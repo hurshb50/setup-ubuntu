@@ -1,13 +1,13 @@
-import type { InstallContext, Package } from "../../package/package";
-import { Task } from "../../task/task";
+import type { InstallContext, Package } from "../package/package";
+import { Task } from "../task/task";
 
-export class SmartChangeDirectory implements Package {
+export class VersionControlSystem implements Package {
     async install(context: InstallContext): Promise<void> {
-        const task = new Task("Smart Change Directory");
+        const task = new Task("Version Control System");
         context.logger.add(task);
         task.start();
 
-        const dependencies = ["zoxide"];
+        const dependencies = ["git", "build-essential"];
         const isInstalled = await context.dependencyManager.isInstalled(dependencies);
 
         if (isInstalled) {
