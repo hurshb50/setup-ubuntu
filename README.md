@@ -19,8 +19,7 @@ Open a new terminal, then:
 - Run `gh auth login` to authenticate the GitHub CLI.
 - Pick a wallpaper in HydraPaper.
 - Put personal shell config in `~/custom.bashrc`, not `~/.bashrc`.
-
-`~/.gitconfig` uses your personal identity. On a work machine, edit it to add your work details, or use `includeIf` to keep both.
+- Update `/.gitconfig` if you are on work machine
 
 ## Publishing
 
