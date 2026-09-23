@@ -29,6 +29,10 @@ function path() {
     export PATH="$HOME/.local/bin:$PATH"
 }
 
+function package_manager() {
+    export VP_PACKAGE_MANAGER="npm@12"
+}
+
 function setup_history() {
     shopt -s histappend
     shopt -s checkwinsize
@@ -131,6 +135,7 @@ function run() {
     fi
 
     path
+    package_manager
     load_auto_suggestion
     setup_history
     completion
