@@ -16,8 +16,11 @@ Open a new terminal, then:
 
 - Log out and back in to use Docker without `sudo`.
 - Sign in to Zed, 1Password, and Chrome.
+- Run `gh auth login` to authenticate the GitHub CLI.
 - Pick a wallpaper in HydraPaper.
 - Put personal shell config in `~/custom.bashrc`, not `~/.bashrc`.
+
+`~/.gitconfig` uses your personal identity. On a work machine, edit it to add your work details, or use `includeIf` to keep both.
 
 ## Publishing
 

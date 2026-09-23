@@ -1,4 +1,6 @@
+import fs from "fs/promises";
 import os from "os";
+import path from "path";
 import { execa } from "execa";
 import { beforeAll, expect, suite, test, vi } from "vite-plus/test";
 import { DependencyManager } from "../dependency-manager/dependency-manager";
@@ -27,6 +29,13 @@ suite("Version Control System", () => {
         const { exitCode, stdout } = await execa("make", ["--version"], { reject: false });
         expect(exitCode).toBe(0);
         expect(stdout).toMatch(/^GNU Make \d+\.\d+/);
+    });
+
+    test("copies the git configuration into the home directory", async () => {
+        const sourceFilePath = path.join(assetsDirectoryPath, ".gitconfig");
+        const destinationFilePath = path.join(os.homedir(), ".gitconfig");
+
+        expect(await fs.readFile(destinationFilePath, "utf8")).toBe(await fs.readFile(sourceFilePath, "utf8"));
     });
 
     test("skips the installation when the dependencies are already installed", async () => {
