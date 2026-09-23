@@ -2,9 +2,9 @@ import fs from "fs/promises";
 import os from "os";
 import path from "path";
 import { describe, expect, test } from "vite-plus/test";
-import { DependencyManager } from "../../dependency-manager/dependency-manager";
-import { Logger } from "../../logger/logger";
-import { ShellConfiguration } from "../shell-configuration";
+import { DependencyManager } from "../dependency-manager/dependency-manager";
+import { Logger } from "../logger/logger";
+import { ShellConfiguration } from "./shell-configuration";
 
 const projectDirectoryPath = path.join(import.meta.dirname, "..", "..", "..", "..");
 const assetsDirectoryPath = path.join(projectDirectoryPath, "assets");

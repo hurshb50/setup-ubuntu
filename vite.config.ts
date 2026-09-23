@@ -30,14 +30,14 @@ const configuration = defineConfig({
             {
                 test: {
                     name: "integration",
-                    include: ["./source/**/integration/**.test.ts"],
+                    include: ["./source/**/*.integration.ts"],
                     globalSetup: ["./source/modules/test/integration/global-setup.ts"],
                 },
             },
             {
                 test: {
                     name: "end-to-end",
-                    include: ["./source/**/end-to-end/**.test.ts"],
+                    include: ["./source/**/*.end-to-end.ts"],
                     globalSetup: ["./source/modules/test/end-to-end/global-setup.ts"],
                 },
             },

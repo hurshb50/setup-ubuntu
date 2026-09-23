@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vite-plus/test";
-import { Task } from "../task";
+import { Task } from "./task";
 
 describe("Task", () => {
     test("starts idle without a step", () => {
