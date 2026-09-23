@@ -9,7 +9,7 @@ export class PasswordManager implements Package {
         context.logger.add(task);
         task.start();
 
-        const dependencies = ["1password"];
+        const dependencies = ["libasound2t64", "1password"];
         const isInstalled = await context.dependencyManager.isInstalled(dependencies);
 
         if (isInstalled) {
