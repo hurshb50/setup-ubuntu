@@ -24,7 +24,7 @@ const configuration = defineConfig({
             {
                 test: {
                     name: "unit",
-                    include: ["./source/**/unit/**.test.ts"],
+                    include: ["./source/**/*.unit.ts"],
                 },
             },
             {
