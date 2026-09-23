@@ -4,7 +4,7 @@ import path from "path";
 import { execa } from "execa";
 import { expect, test } from "vite-plus/test";
 
-const projectDirectoryPath = path.join(import.meta.dirname, "..", "..");
+const projectDirectoryPath = path.join(import.meta.dirname, "..");
 
 test("installs every package on a fresh machine", { timeout: 600_000 }, async () => {
     const { exitCode } = await execa("setup-ubuntu", [], { reject: false });
