@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 FROM ghcr.io/voidzero-dev/vite-plus:latest AS build
 WORKDIR /build
 COPY --chown=vp:vp package.json package-lock.json ./

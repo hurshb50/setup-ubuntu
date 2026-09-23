@@ -21,60 +21,33 @@ permissions:
     contents: read
 
 jobs:
-    code-checks:
-        runs-on: ubuntu-slim
-        steps:
-            - name: Checkout Code
-              uses: actions/checkout@v7
-
-            - name: Set up Vite+
-              uses: voidzero-dev/setup-vp@v1.20.0
-              with:
-                  cache: true
-
-            - name: Install Dependencies
-              run: vp install
-
-            - name: Code Checks
-              run: vp check
-
-    unit-tests:
-        runs-on: ubuntu-slim
-        steps:
-            - name: Checkout Code
-              uses: actions/checkout@v7
-
-            - name: Set up Vite+
-              uses: voidzero-dev/setup-vp@v1.20.0
-              with:
-                  cache: true
-
-            - name: Install Dependencies
-              run: vp install
-
-            - name: Unit Tests
-              run: vp test --project unit
-
-    build:
-        runs-on: ubuntu-slim
-        steps:
-            - name: Checkout Code
-              uses: actions/checkout@v7
-
-            - name: Set up Vite+
-              uses: voidzero-dev/setup-vp@v1.20.0
-              with:
-                  cache: true
-
-            - name: Install Dependencies
-              run: vp install
-
-            - name: Build Application
-              run: vp run build
-
-    integration-tests:
-        runs-on: ubuntu-24.04
+    validation:
+        name: ${{ matrix.name }}
+        runs-on: ${{ matrix.runner }}
         timeout-minutes: 45
+        strategy:
+            fail-fast: true
+            matrix:
+                include:
+                    - name: Code Checks
+                      runner: ubuntu-slim
+                      command: vp run check
+
+                    - name: Unit Tests
+                      runner: ubuntu-slim
+                      command: vp run unit-test
+
+                    - name: Build Application
+                      runner: ubuntu-slim
+                      command: vp run build
+
+                    - name: Integration Tests
+                      runner: ubuntu-24.04
+                      command: vp run integration-test
+
+                    - name: End-to-End Tests
+                      runner: ubuntu-24.04
+                      command: vp run end-to-end-test
         steps:
             - name: Checkout Code
               uses: actions/checkout@v7
@@ -87,34 +60,12 @@ jobs:
             - name: Install Dependencies
               run: vp install
 
-            - name: Integration Tests
-              run: vp run integration-test
-
-    end-to-end-tests:
-        runs-on: ubuntu-24.04
-        timeout-minutes: 45
-        steps:
-            - name: Checkout Code
-              uses: actions/checkout@v7
-
-            - name: Set up Vite+
-              uses: voidzero-dev/setup-vp@v1.20.0
-              with:
-                  cache: true
-
-            - name: Install Dependencies
-              run: vp install
-
-            - name: End-to-End Tests
-              run: vp run end-to-end-test
+            - name: ${{ matrix.name }}
+              run: ${{ matrix.command }}
 
     publish:
         needs:
-            - code-checks
-            - build
-            - unit-tests
-            - integration-tests
-            - end-to-end-tests
+            - validation
         runs-on: ubuntu-slim
         permissions:
             contents: write
