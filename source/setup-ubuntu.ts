@@ -25,7 +25,7 @@ import { Wallpapers } from "./modules/wallpapers/wallpapers";
 program
     .name(name)
     .version(version)
-    .description("TODO")
+    .description("Sets up a fresh Ubuntu machine with a standard set of tools, configuration, and dotfiles.")
     .action(async () => {
         const logger = new Logger();
         const dependencyManager = new DependencyManager();

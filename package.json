@@ -41,7 +41,7 @@
             "onFail": "download"
         }
     },
-    "description": "TODO",
+    "description": "Sets up a fresh Ubuntu machine with a standard set of tools, configuration, and dotfiles.",
     "homepage": "https://github.com/hurshb50/setup-ubuntu#readme",
     "bugs": {
         "url": "https://github.com/hurshb50/setup-ubuntu/issues"
