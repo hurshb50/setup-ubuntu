@@ -29,6 +29,9 @@ program
     .action(async () => {
         const logger = new Logger();
         const dependencyManager = new DependencyManager();
+
+        await dependencyManager.authenticate();
+
         logger.start();
 
         const packages: Package[] = [
