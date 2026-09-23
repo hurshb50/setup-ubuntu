@@ -11,8 +11,6 @@ export class PasswordManager implements Package {
         task.start();
 
         const osRelease = await fs.readFile(path.join("/", "etc", "os-release"), "utf8");
-        const versionId = osRelease.match(/^VERSION_ID="?([\d.]+)"?$/m)?.[1];
-        const alsaPackageName = Number.parseInt(versionId ?? "", 10) >= 24 ? "libasound2t64" : "libasound2";
         const dependencies = [alsaPackageName(osRelease), "1password"];
         const isInstalled = await context.dependencyManager.isInstalled(dependencies);
 
@@ -71,4 +69,10 @@ export class PasswordManager implements Package {
 
         task.finish();
     }
+}
+
+export function alsaPackageName(osRelease: string): string {
+    const versionId = osRelease.match(/^VERSION_ID="?([\d.]+)"?$/m)?.[1];
+
+    return Number.parseInt(versionId ?? "", 10) >= 24 ? "libasound2t64" : "libasound2";
 }
