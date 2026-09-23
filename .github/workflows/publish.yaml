@@ -58,7 +58,7 @@ jobs:
                   cache: true
 
             - name: Install Dependencies
-              run: vp install
+              run: vp install --frozen-lockfile
 
             - name: ${{ matrix.name }}
               run: ${{ matrix.command }}
@@ -82,7 +82,7 @@ jobs:
                   cache: true
 
             - name: Install Dependencies
-              run: vp install
+              run: vp install --frozen-lockfile
 
             - name: Build Application
               run: vp run build
