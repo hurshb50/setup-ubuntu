@@ -27,7 +27,7 @@ export class Fonts implements Package {
         await fs.mkdir(destinationDirectoryPath, { recursive: true });
 
         task.continue("Copy fonts");
-        
+
         await fs.cp(sourceDirectoryPath, destinationDirectoryPath, {
             recursive: true,
             dereference: true,

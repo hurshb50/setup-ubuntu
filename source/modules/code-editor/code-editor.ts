@@ -21,7 +21,7 @@ export class CodeEditor implements Package {
         }
 
         task.continue("Copy configuration");
-        
+
         await fs.cp(sourceDirectoryPath, destinationDirectoryPath, {
             recursive: true,
             dereference: true,
