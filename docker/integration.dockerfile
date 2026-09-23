@@ -12,7 +12,9 @@ RUN useradd -m -s /bin/bash user
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
     apt-get update && \
-    apt-get install -y --no-install-recommends curl ca-certificates sudo
+    apt-get install -y --no-install-recommends curl ca-certificates sudo gnupg unzip xz-utils
+
+RUN apt-get update
 
 RUN echo 'user ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/user && \
     chmod 0440 /etc/sudoers.d/user

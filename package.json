@@ -11,7 +11,7 @@
         "check": "vp check",
         "fix": "vp check --fix",
         "unit-test": "vp test --project unit",
-        "integration-test": "docker build -t setup-ubuntu:integration -f ./docker/integration.dockerfile . && docker run --rm setup-ubuntu:integration",
+        "integration-test": "node scripts/integration.ts",
         "end-to-end-test": "docker build -t setup-ubuntu:end-to-end -f ./docker/end-to-end.dockerfile . && docker run --rm setup-ubuntu:end-to-end"
     },
     "dependencies": {
