@@ -1,3 +1,4 @@
+import fs from "fs/promises";
 import path from "path";
 import { execa } from "execa";
 import type { InstallContext, Package } from "../package/package";
@@ -9,7 +10,10 @@ export class PasswordManager implements Package {
         context.logger.add(task);
         task.start();
 
-        const dependencies = ["libasound2t64", "1password"];
+        const osRelease = await fs.readFile(path.join("/", "etc", "os-release"), "utf8");
+        const versionId = osRelease.match(/^VERSION_ID="?([\d.]+)"?$/m)?.[1];
+        const alsaPackageName = Number.parseInt(versionId ?? "", 10) >= 24 ? "libasound2t64" : "libasound2";
+        const dependencies = [alsaPackageName(osRelease), "1password"];
         const isInstalled = await context.dependencyManager.isInstalled(dependencies);
 
         if (isInstalled) {

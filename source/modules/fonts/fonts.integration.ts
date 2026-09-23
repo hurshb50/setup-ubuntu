@@ -39,6 +39,20 @@ suite("Fonts", () => {
         }
     });
 
+    test("copies font data rather than Git LFS pointers", async () => {
+        const sourceDirectoryPath = path.join(assetsDirectoryPath, "fonts");
+
+        for (const directoryName of await fs.readdir(sourceDirectoryPath)) {
+            const sourceDirectory = path.join(sourceDirectoryPath, directoryName);
+
+            for (const fileName of await fs.readdir(sourceDirectory)) {
+                const contents = await fs.readFile(path.join(sourceDirectory, fileName));
+
+                expect(contents.subarray(0, 4).toString()).toBe("OTTO");
+            }
+        }
+    });
+
     test("installs fontconfig", async () => {
         const { exitCode } = await execa("fc-list", [], { reject: false });
         expect(exitCode).toBe(0);
