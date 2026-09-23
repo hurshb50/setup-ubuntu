@@ -17,8 +17,104 @@ concurrency:
     group: publish
     cancel-in-progress: false
 
+permissions:
+    contents: read
+
 jobs:
+    code-checks:
+        runs-on: ubuntu-slim
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v7
+
+            - name: Set up Vite+
+              uses: voidzero-dev/setup-vp@v1.20.0
+              with:
+                  cache: true
+
+            - name: Install Dependencies
+              run: vp install
+
+            - name: Code Checks
+              run: vp check
+
+    unit-tests:
+        runs-on: ubuntu-slim
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v7
+
+            - name: Set up Vite+
+              uses: voidzero-dev/setup-vp@v1.20.0
+              with:
+                  cache: true
+
+            - name: Install Dependencies
+              run: vp install
+
+            - name: Unit Tests
+              run: vp test --project unit
+
+    build:
+        runs-on: ubuntu-slim
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v7
+
+            - name: Set up Vite+
+              uses: voidzero-dev/setup-vp@v1.20.0
+              with:
+                  cache: true
+
+            - name: Install Dependencies
+              run: vp install
+
+            - name: Build Application
+              run: vp run build
+
+    integration-tests:
+        runs-on: ubuntu-24.04
+        timeout-minutes: 45
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v7
+
+            - name: Set up Vite+
+              uses: voidzero-dev/setup-vp@v1.20.0
+              with:
+                  cache: true
+
+            - name: Install Dependencies
+              run: vp install
+
+            - name: Integration Tests
+              run: vp run integration-test
+
+    end-to-end-tests:
+        runs-on: ubuntu-24.04
+        timeout-minutes: 45
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v7
+
+            - name: Set up Vite+
+              uses: voidzero-dev/setup-vp@v1.20.0
+              with:
+                  cache: true
+
+            - name: Install Dependencies
+              run: vp install
+
+            - name: End-to-End Tests
+              run: vp run end-to-end-test
+
     publish:
+        needs:
+            - code-checks
+            - build
+            - unit-tests
+            - integration-tests
+            - end-to-end-tests
         runs-on: ubuntu-slim
         permissions:
             contents: write
@@ -36,12 +132,6 @@ jobs:
 
             - name: Install Dependencies
               run: vp install
-
-            - name: Code Checks
-              run: vp check
-
-            - name: Run Tests
-              run: vp test
 
             - name: Build Application
               run: vp run build
