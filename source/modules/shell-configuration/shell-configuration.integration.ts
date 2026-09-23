@@ -1,15 +1,13 @@
 import fs from "fs/promises";
 import os from "os";
 import path from "path";
-import { describe, expect, test } from "vite-plus/test";
+import { expect, suite, test } from "vite-plus/test";
 import { DependencyManager } from "../dependency-manager/dependency-manager";
 import { Logger } from "../logger/logger";
+import { assetsDirectoryPath, projectDirectoryPath } from "../test/integration/paths";
 import { ShellConfiguration } from "./shell-configuration";
 
-const projectDirectoryPath = path.join(import.meta.dirname, "..", "..", "..", "..");
-const assetsDirectoryPath = path.join(projectDirectoryPath, "assets");
-
-describe("Shell Configuration", () => {
+suite("Shell Configuration", () => {
     test("copies the shell configuration into the home directory", async () => {
         const homeDirectoryPath = await fs.mkdtemp(path.join(os.tmpdir(), "shell-configuration-"));
 
