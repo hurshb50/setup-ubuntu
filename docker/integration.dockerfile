@@ -2,7 +2,7 @@
 
 FROM ghcr.io/voidzero-dev/vite-plus:latest AS setup-ubuntu
 WORKDIR /setup-ubuntu
-COPY --chown=vp:vp package.json package-lock.json ./
+COPY --chown=vp:vp package.json pnpm-lock.yaml ./
 RUN vp install
 COPY --parents tsconfig.json vite.config.ts assets source ./
 
