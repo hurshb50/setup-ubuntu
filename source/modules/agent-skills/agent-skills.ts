@@ -16,7 +16,11 @@ export class AgentSkills implements Package {
         await fs.mkdir(destinationDirectoryPath, { recursive: true });
 
         task.continue("Copy agent skills");
-        await fs.cp(sourceDirectoryPath, destinationDirectoryPath, { recursive: true });
+        
+        await fs.cp(sourceDirectoryPath, destinationDirectoryPath, {
+            recursive: true,
+            dereference: true,
+        });
 
         task.finish();
     }
