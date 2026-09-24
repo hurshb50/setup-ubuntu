@@ -11,8 +11,8 @@
         "check": "vp check",
         "fix": "vp check --fix",
         "unit-test": "vp test --project unit",
-        "integration-test": "bun scripts/integration.ts",
-        "end-to-end-test": "bun scripts/end-to-end.ts"
+        "integration-test": "node scripts/integration.ts",
+        "end-to-end-test": "node scripts/end-to-end.ts"
     },
     "dependencies": {
         "@commander-js/extra-typings": "^15.0.0",
