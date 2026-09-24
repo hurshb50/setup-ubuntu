@@ -1,7 +1,8 @@
 import fs from "fs/promises";
 import os from "os";
 import path from "path";
-import { execa } from "execa";
+import util from "util";
+import childProcess from "child_process";
 import type { InstallContext, Package } from "../package/package";
 import { Task } from "../task/task";
 
@@ -30,14 +31,14 @@ export class AutoSuggestion implements Package {
             const installationFilePath = path.join(temporaryDirectoryPath, "ble-nightly", "ble.sh");
 
             task.continue("Download ble.sh");
+            const exec = util.promisify(childProcess.exec);
 
-            await execa(
+            await exec(
                 `curl -L https://github.com/akinomyoga/ble.sh/releases/download/nightly/ble-nightly.tar.xz | tar xJf - -C ${temporaryDirectoryPath}`,
-                { shell: true },
             );
 
             task.continue("Install ble.sh");
-            await execa(`bash ${installationFilePath} --install ${destinationDirectoryPath}`, { shell: true });
+            await exec(`bash ${installationFilePath} --install ${destinationDirectoryPath}`);
 
             task.continue("Remove temporary directory");
             await fs.rm(temporaryDirectoryPath, { recursive: true });
