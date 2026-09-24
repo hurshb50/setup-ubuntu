@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
-import { execa } from "execa";
+import util from "util";
+import childProcess from "child_process";
 import type { InstallContext, Package } from "../package/package";
 import { Task } from "../task/task";
 
@@ -17,7 +18,8 @@ export class CodeEditor implements Package {
         const commandExists = await context.dependencyManager.commandExists("zed");
 
         if (!commandExists) {
-            await execa("curl -f https://zed.dev/install.sh | sh", { shell: true });
+            const exec = util.promisify(childProcess.exec);
+            await exec("curl -f https://zed.dev/install.sh | sh");
         }
 
         task.continue("Copy configuration");

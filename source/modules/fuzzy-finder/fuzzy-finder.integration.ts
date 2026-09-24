@@ -1,5 +1,6 @@
 import os from "os";
-import { execa } from "execa";
+import util from "util";
+import childProcess from "child_process";
 import { beforeAll, expect, suite, test, vi } from "vite-plus/test";
 import { DependencyManager } from "../dependency-manager/dependency-manager";
 import { Logger } from "../logger/logger";
@@ -18,8 +19,8 @@ suite("Fuzzy Finder", () => {
     });
 
     test("makes fzf available", async () => {
-        const { exitCode, stdout } = await execa("fzf", ["--version"], { reject: false });
-        expect(exitCode).toBe(0);
+        const exec = util.promisify(childProcess.exec);
+        const { stdout } = await exec("fzf --version");
         expect(stdout).toMatch(/^\d+\.\d+\.\d+/);
     });
 

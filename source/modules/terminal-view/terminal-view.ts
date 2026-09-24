@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
-import { execa } from "execa";
+import util from "util";
+import childProcess from "child_process";
 import type { InstallContext, Package } from "../package/package";
 import { Task } from "../task/task";
 
@@ -21,7 +22,8 @@ export class TerminalView implements Package {
             await context.dependencyManager.install(dependencies, task);
 
             task.continue("Install oh-my-posh");
-            await execa("curl -s https://ohmyposh.dev/install.sh | bash -s", { shell: true });
+            const exec = util.promisify(childProcess.exec);
+            await exec("curl -s https://ohmyposh.dev/install.sh | bash -s");
         }
 
         const sourceFilePath = path.join(context.directories.assets, "oh-my-posh.toml");

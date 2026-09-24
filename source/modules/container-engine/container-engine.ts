@@ -1,6 +1,7 @@
 import os from "os";
 import path from "path";
-import { execa } from "execa";
+import util from "util";
+import childProcess from "child_process";
 import type { InstallContext, Package } from "../package/package";
 import { Task } from "../task/task";
 
@@ -36,15 +37,14 @@ export class ContainerEngine implements Package {
         const sourceFilePath = path.join("/", "etc", "apt", "sources.list.d", "docker.list");
 
         task.continue("Set up docker sources");
+        const exec = util.promisify(childProcess.exec);
 
-        await execa(
+        await exec(
             `curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor --yes -o ${keyringFilePath}`,
-            { shell: true },
         );
 
-        await execa(
+        await exec(
             `echo "deb [arch=$(dpkg --print-architecture) signed-by=${keyringFilePath}] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" | sudo tee ${sourceFilePath} > /dev/null`,
-            { shell: true },
         );
 
         task.continue("Update package manager");
@@ -54,7 +54,7 @@ export class ContainerEngine implements Package {
         await context.dependencyManager.install(dependencies, task);
 
         task.continue("Add user to docker group");
-        await execa(`sudo usermod --append --groups docker ${os.userInfo().username}`, { shell: true });
+        await exec(`sudo usermod --append --groups docker ${os.userInfo().username}`);
 
         task.finish();
     }

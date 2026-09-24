@@ -1,4 +1,5 @@
-import { execa } from "execa";
+import util from "util";
+import childProcess from "child_process";
 import { existsSync } from "fs";
 
 export async function setup(): Promise<void> {
@@ -6,5 +7,6 @@ export async function setup(): Promise<void> {
 
     if (!isInContainer) throw new Error("Not in a docker container.");
 
-    await execa("vp", ["install", "-g", "./package.tgz"]);
+    const exec = util.promisify(childProcess.exec);
+    await exec("vp install -g ./package.tgz");
 }

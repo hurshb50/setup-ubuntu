@@ -1,5 +1,6 @@
 import path from "path";
-import { execa } from "execa";
+import util from "util";
+import childProcess from "child_process";
 import type { InstallContext, Package } from "../package/package";
 import { Task } from "../task/task";
 
@@ -28,15 +29,14 @@ export class CodeHost implements Package {
         const sourceFilePath = path.join("/", "etc", "apt", "sources.list.d", "github-cli.list");
 
         task.continue("Set up github cli sources");
+        const exec = util.promisify(childProcess.exec);
 
-        await execa(
+        await exec(
             `curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.asc | sudo gpg --dearmor --yes -o ${keyringFilePath}`,
-            { shell: true },
         );
 
-        await execa(
+        await exec(
             `echo "deb [arch=$(dpkg --print-architecture) signed-by=${keyringFilePath}] https://cli.github.com/packages stable main" | sudo tee ${sourceFilePath} > /dev/null`,
-            { shell: true },
         );
 
         task.continue("Update package manager");

@@ -1,5 +1,6 @@
 import os from "os";
-import { execa } from "execa";
+import util from "util";
+import childProcess from "child_process";
 import { beforeAll, expect, suite, test, vi } from "vite-plus/test";
 import { DependencyManager } from "../dependency-manager/dependency-manager";
 import { Logger } from "../logger/logger";
@@ -18,8 +19,8 @@ suite("Browser", () => {
     });
 
     test("makes google chrome available", async () => {
-        const { exitCode, stdout } = await execa("google-chrome", ["--version"], { reject: false });
-        expect(exitCode).toBe(0);
+        const exec = util.promisify(childProcess.exec);
+        const { stdout } = await exec("google-chrome --version");
         expect(stdout).toMatch(/^Google Chrome \d+\.\d+\.\d+\.\d+/);
     });
 

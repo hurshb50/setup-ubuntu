@@ -1,5 +1,6 @@
 import path from "path";
-import { execa } from "execa";
+import util from "util";
+import childProcess from "child_process";
 import type { InstallContext, Package } from "../package/package";
 import { Task } from "../task/task";
 
@@ -28,16 +29,14 @@ export class Browser implements Package {
         const sourceFilePath = path.join("/", "etc", "apt", "sources.list.d", "google-chrome.list");
 
         task.continue("Set up google chrome sources");
-        await execa(
+        const exec = util.promisify(childProcess.exec);
+
+        await exec(
             `curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor --yes -o ${keyringFilePath}`,
-            {
-                shell: true,
-            },
         );
 
-        await execa(
+        await exec(
             `echo 'deb [arch=amd64 signed-by=${keyringFilePath}] http://dl.google.com/linux/chrome/deb/ stable main' | sudo tee ${sourceFilePath} > /dev/null`,
-            { shell: true },
         );
 
         task.continue("Update package manager");

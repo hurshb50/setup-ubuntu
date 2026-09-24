@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
-import { execa } from "execa";
+import util from "util";
+import childProcess from "child_process";
 import type { InstallContext, Package } from "../package/package";
 import { Task } from "../task/task";
 
@@ -34,31 +35,26 @@ export class PasswordManager implements Package {
         const debsigKeyringFilePath = path.join(debsigKeyringDirectoryPath, "debsig.gpg");
 
         task.continue("Set up 1password sources");
+        const exec = util.promisify(childProcess.exec);
 
-        await execa(
+        await exec(
             `curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --yes --output ${keyringFilePath}`,
-            { shell: true },
         );
 
-        await execa(
+        await exec(
             `echo 'deb [arch=amd64 signed-by=${keyringFilePath}] https://downloads.1password.com/linux/debian/amd64 stable main' | sudo tee ${sourceFilePath}`,
-            { shell: true },
         );
 
-        await execa(`sudo mkdir -p ${policyDirectoryPath}`, { shell: true });
+        await exec(`sudo mkdir -p ${policyDirectoryPath}`);
 
-        await execa(
+        await exec(
             `curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | sudo tee ${policyFilePath}`,
-            {
-                shell: true,
-            },
         );
 
-        await execa(`sudo mkdir -p ${debsigKeyringDirectoryPath}`, { shell: true });
+        await exec(`sudo mkdir -p ${debsigKeyringDirectoryPath}`);
 
-        await execa(
+        await exec(
             `curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --yes --output ${debsigKeyringFilePath}`,
-            { shell: true },
         );
 
         task.continue("Update package manager");

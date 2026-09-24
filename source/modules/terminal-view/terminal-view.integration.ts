@@ -1,7 +1,8 @@
 import fs from "fs/promises";
 import os from "os";
 import path from "path";
-import { execa } from "execa";
+import util from "util";
+import childProcess from "child_process";
 import { beforeAll, expect, suite, test, vi } from "vite-plus/test";
 import { DependencyManager } from "../dependency-manager/dependency-manager";
 import { Logger } from "../logger/logger";
@@ -21,8 +22,8 @@ suite("Terminal View", () => {
 
     test("makes oh-my-posh available", async () => {
         const filePath = path.join(os.homedir(), ".local", "bin", "oh-my-posh");
-        const { exitCode, stdout } = await execa(filePath, ["--version"], { reject: false });
-        expect(exitCode).toBe(0);
+        const exec = util.promisify(childProcess.exec);
+        const { stdout } = await exec(`${filePath} --version`);
         expect(stdout).toMatch(/\d+\.\d+\.\d+/);
     });
 

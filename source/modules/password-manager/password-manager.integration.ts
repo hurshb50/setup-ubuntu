@@ -1,5 +1,6 @@
 import os from "os";
-import { execa } from "execa";
+import util from "util";
+import childProcess from "child_process";
 import { beforeAll, expect, suite, test, vi } from "vite-plus/test";
 import { DependencyManager } from "../dependency-manager/dependency-manager";
 import { Logger } from "../logger/logger";
@@ -18,10 +19,8 @@ suite("Password Manager", () => {
     });
 
     test("installs the 1password package", async () => {
-        const { exitCode, stdout } = await execa("dpkg-query", ["--show", "--showformat=${Status}", "1password"], {
-            reject: false,
-        });
-        expect(exitCode).toBe(0);
+        const exec = util.promisify(childProcess.exec);
+        const { stdout } = await exec("dpkg-query --show --showformat='\${Status}' 1password");
         expect(stdout).toContain("install ok installed");
     });
 

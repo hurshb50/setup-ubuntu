@@ -1,7 +1,8 @@
 import fs from "fs/promises";
 import os from "os";
 import path from "path";
-import { execa } from "execa";
+import util from "util";
+import childProcess from "child_process";
 import { beforeAll, expect, suite, test, vi } from "vite-plus/test";
 import { DependencyManager } from "../dependency-manager/dependency-manager";
 import { Logger } from "../logger/logger";
@@ -54,8 +55,9 @@ suite("Fonts", () => {
     });
 
     test("installs fontconfig", async () => {
-        const { exitCode } = await execa("fc-list", [], { reject: false });
-        expect(exitCode).toBe(0);
+        const exec = util.promisify(childProcess.exec);
+
+        await exec("fc-list");
     });
 
     test("skips the installation when fontconfig is already installed", async () => {

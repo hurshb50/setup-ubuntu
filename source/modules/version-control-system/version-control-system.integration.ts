@@ -1,7 +1,8 @@
 import fs from "fs/promises";
 import os from "os";
 import path from "path";
-import { execa } from "execa";
+import util from "util";
+import childProcess from "child_process";
 import { beforeAll, expect, suite, test, vi } from "vite-plus/test";
 import { DependencyManager } from "../dependency-manager/dependency-manager";
 import { Logger } from "../logger/logger";
@@ -20,14 +21,14 @@ suite("Version Control System", () => {
     });
 
     test("makes git available", async () => {
-        const { exitCode, stdout } = await execa("git", ["--version"], { reject: false });
-        expect(exitCode).toBe(0);
+        const exec = util.promisify(childProcess.exec);
+        const { stdout } = await exec("git --version");
         expect(stdout).toMatch(/^git version \d+\.\d+\.\d+/);
     });
 
     test("makes the build toolchain available", async () => {
-        const { exitCode, stdout } = await execa("make", ["--version"], { reject: false });
-        expect(exitCode).toBe(0);
+        const exec = util.promisify(childProcess.exec);
+        const { stdout } = await exec("make --version");
         expect(stdout).toMatch(/^GNU Make \d+\.\d+/);
     });
 

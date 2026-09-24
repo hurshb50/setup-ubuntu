@@ -1,5 +1,6 @@
 import os from "os";
-import { execa } from "execa";
+import util from "util";
+import childProcess from "child_process";
 import { beforeAll, expect, suite, test, vi } from "vite-plus/test";
 import { DependencyManager } from "../dependency-manager/dependency-manager";
 import { Logger } from "../logger/logger";
@@ -18,14 +19,14 @@ suite("Container Engine", () => {
     });
 
     test("makes docker available", async () => {
-        const { exitCode, stdout } = await execa("docker", ["--version"], { reject: false });
-        expect(exitCode).toBe(0);
+        const exec = util.promisify(childProcess.exec);
+        const { stdout } = await exec("docker --version");
         expect(stdout).toMatch(/^Docker version \d+\.\d+\.\d+/);
     });
 
     test("adds the user to the docker group", async () => {
-        const { exitCode, stdout } = await execa("id", ["-nG", os.userInfo().username], { reject: false });
-        expect(exitCode).toBe(0);
+        const exec = util.promisify(childProcess.exec);
+        const { stdout } = await exec(`id -nG ${os.userInfo().username}`);
         expect(stdout.split(" ")).toContain("docker");
     });
 
