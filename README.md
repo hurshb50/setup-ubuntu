@@ -23,9 +23,3 @@ Open a new terminal, then:
 - Pick a wallpaper in HydraPaper.
 - Put personal shell config in `~/custom.bashrc`, not `~/.bashrc`.
 - Update `/.gitconfig` if you are on work machine
-
-## Publishing
-
-1. Run `publish.yaml` from the Actions tab with a `patch`, `minor`, or `major` bump. CI checks, tests, builds, tags, and stages the package, using OIDC instead of a token.
-2. Approve the staged package on npmjs.com to publish it.
-3. `release.yaml` creates the GitHub release once the version is live.
