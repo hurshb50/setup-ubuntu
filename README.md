@@ -8,7 +8,7 @@ Sets up a fresh Ubuntu machine with tools, configuration, and dotfiles.
 sudo apt update
 sudo apt install -y curl ca-certificates
 curl -fsSL https://vite.plus | bash
-vpx @hurshb50/setup-ubuntu
+vpx @hurshb50/setup-ubuntu@latest
 ```
 
 Vite+ defaults to pnpm, which can hold back freshly published releases. The setup pins npm globally, so later commands need no prefix.
