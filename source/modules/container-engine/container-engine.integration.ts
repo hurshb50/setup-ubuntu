@@ -27,7 +27,7 @@ suite("Container Engine", () => {
     test("adds the user to the docker group", async () => {
         const exec = util.promisify(childProcess.exec);
         const { stdout } = await exec(`id -nG ${os.userInfo().username}`);
-        expect(stdout.split(" ")).toContain("docker");
+        expect(stdout.trim().split(" ")).toContain("docker");
     });
 
     test("skips the installation when docker is already installed", async () => {
