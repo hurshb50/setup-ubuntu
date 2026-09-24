@@ -125,6 +125,10 @@ function fuzzy_finder() {
     fi
 }
 
+function typescript_toolchain() {
+    . "/home/hpatel/.config/vite-plus/env"
+}
+
 function run() {
     if ! is_interactive; then
         return
@@ -141,6 +145,7 @@ function run() {
     disable_legacy
     swap_capslock_and_esc
     fuzzy_finder
+    typescript_toolchain
     start_auto_suggestion
 }
 
