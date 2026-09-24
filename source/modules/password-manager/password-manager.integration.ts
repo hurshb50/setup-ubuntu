@@ -20,7 +20,7 @@ suite("Password Manager", () => {
 
     test("installs the 1password package", async () => {
         const exec = util.promisify(childProcess.exec);
-        const { stdout } = await exec("dpkg-query --show --showformat='\${Status}' 1password");
+        const { stdout } = await exec("dpkg-query --show --showformat='${Status}' 1password");
         expect(stdout).toContain("install ok installed");
     });
 
