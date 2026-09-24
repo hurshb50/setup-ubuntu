@@ -1,31 +1,58 @@
 {
-    "git_panel": { "tree_view": true },
-    "auto_install_extensions": {
-        "catppuccin-icons": true,
-        "rust-brown": true
+    "accessible_mode": false,
+    "active_pane_modifiers": {
+        "border_size": 0,
+        "inactive_opacity": 1
     },
     "agent": {
+        "auto_compact": {
+            "enabled": true,
+            "threshold": "90%"
+        },
+        "button": true,
+        "cancel_generation_on_terminal_stop": true,
+        "commit_message_include_project_rules": true,
+        "default_height": 320,
+        "default_model": {
+            "effort": "max",
+            "enable_thinking": true,
+            "model": "deepseek-flash",
+            "provider": "deepseek"
+        },
+        "default_profile": "write",
+        "default_width": 640,
+        "dock": "left",
         "enable_feedback": false,
-        "thinking_display": "always_collapsed",
+        "enabled": true,
+        "expand_edit_card": true,
+        "expand_terminal_card": true,
+        "flexible": true,
+        "inline_assistant_use_streaming_tools": true,
+        "limit_content_width": true,
+        "max_content_width": 850,
+        "message_editor_min_lines": 4,
+        "model_parameters": [],
+        "notify_when_agent_waiting": "primary_screen",
+        "play_sound_when_agent_done": "never",
+        "prevent_idle_sleep": true,
         "profiles": {
-            "minimal": {
-                "name": "Minimal",
-                "tools": {
-                    "fetch": true,
-                    "search_web": true
-                }
-            },
             "ask": {
                 "name": "Ask",
                 "tools": {
+                    "ask_user": false,
                     "copy_path": false,
                     "create_directory": false,
+                    "create_thread": true,
                     "delete_path": false,
                     "diagnostics": true,
                     "edit_file": false,
                     "fetch": true,
                     "find_path": true,
+                    "find_references": true,
+                    "get_code_actions": true,
+                    "go_to_definition": true,
                     "grep": true,
+                    "list_agents_and_models": true,
                     "list_directory": true,
                     "move_path": false,
                     "read_file": true,
@@ -36,20 +63,37 @@
                     "write_file": false
                 }
             },
+            "minimal": {
+                "enable_all_context_servers": false,
+                "name": "Minimal",
+                "tools": {
+                    "fetch": true,
+                    "search_web": true
+                }
+            },
             "write": {
+                "enable_all_context_servers": true,
                 "name": "Write",
                 "tools": {
+                    "apply_code_action": true,
+                    "ask_user": false,
                     "copy_path": true,
                     "create_directory": true,
+                    "create_thread": true,
                     "delete_path": true,
                     "diagnostics": true,
                     "edit_file": true,
                     "fetch": true,
                     "find_path": true,
+                    "find_references": true,
+                    "get_code_actions": true,
+                    "go_to_definition": true,
                     "grep": true,
+                    "list_agents_and_models": true,
                     "list_directory": true,
                     "move_path": true,
                     "read_file": true,
+                    "rename_symbol": true,
                     "search_web": true,
                     "skill": true,
                     "spawn_agent": true,
@@ -58,104 +102,1084 @@
                 }
             }
         },
-        "default_profile": "minimal",
-        "default_model": {
-            "provider": "deepseek",
-            "model": "deepseek-v4-flash",
-            "enable_thinking": false,
-            "effort": null
-        }
+        "sandbox_permissions": {
+            "network_hosts": [
+                "oxc.rs",
+                "eslint.style",
+                "*.npmjs.org",
+                "nodejs.org",
+                "*.nodejs.org",
+                "raw.githubusercontent.com",
+                "api.github.com",
+                "github.com",
+                "zed.dev"
+            ]
+        },
+        "show_merge_conflict_indicator": true,
+        "show_turn_stats": false,
+        "sidebar_side": "left",
+        "single_file_review": false,
+        "terminal_init_command": "",
+        "thinking_display": "always_collapsed",
+        "threads_sidebar_default_width": 300,
+        "tool_permissions": {
+            "default": "confirm",
+            "tools": {
+                "create_directory": {
+                    "default": "allow"
+                },
+                "fetch": {
+                    "default": "allow"
+                },
+                "terminal": {
+                    "default": "allow"
+                }
+            }
+        },
+        "use_modifier_to_send": false
     },
+    "agent_buffer_font_family": null,
+    "agent_buffer_font_size": 12,
+    "agent_servers": {},
+    "agent_ui_font_family": null,
+    "agent_ui_font_size": null,
+    "allow_rewrap": "in_comments",
+    "always_treat_brackets_as_autoclosed": false,
+    "audio": {
+        "experimental.input_audio_device": null,
+        "experimental.output_audio_device": null
+    },
+    "auto_indent": "syntax_aware",
+    "auto_indent_on_paste": true,
+    "auto_install_extensions": {
+        "catppuccin-icons": true,
+        "html": true,
+        "rust-brown": true
+    },
+    "auto_signature_help": false,
+    "auto_update": true,
+    "auto_update_extensions": {},
+    "autosave": "off",
+    "autoscroll_on_clicks": false,
+    "base_keymap": "Zed",
+    "bottom_dock_layout": "contained",
+    "buffer_font_fallbacks": null,
     "buffer_font_family": "Comic Code Ligatures",
+    "buffer_font_features": {},
+    "buffer_font_size": 15,
+    "buffer_font_weight": 400,
+    "buffer_line_height": "comfortable",
+    "call_hierarchy": {
+        "modal_max_width": "medium"
+    },
+    "calls": {
+        "mute_on_join": false,
+        "share_on_join": false
+    },
+    "centered_layout": {
+        "left_padding": 0.2,
+        "right_padding": 0.2
+    },
+    "cli_default_open_behavior": "existing_window",
+    "close_on_file_delete": false,
+    "close_panel_on_toggle": false,
+    "code_actions_on_format": {},
+    "code_lens": "off",
+    "collaboration_panel": {
+        "button": true,
+        "default_width": 240,
+        "dock": "right"
+    },
     "colorize_brackets": true,
     "command_aliases": {
-        "f": "file_finder::Toggle",
-        "only": "pane::CloseOtherItems",
+        "B": "workspace::ToggleBottomDock",
+        "D": "debug_panel::ToggleFocus",
         "L": "workspace::ToggleLeftDock",
         "R": "workspace::ToggleRightDock",
-        "B": "workspace::ToggleBottomDock",
-        "reopen": "pane::ReopenClosedItem",
-        "thread": "agent::NewThread",
         "S": "multi_workspace::ToggleWorkspaceSidebar",
-        "D": "debug_panel::ToggleFocus"
+        "f": "file_finder::Toggle",
+        "only": "pane::CloseOtherItems",
+        "reopen": "pane::ReopenClosedItem",
+        "thread": "agent::NewThread"
+    },
+    "command_palette": {
+        "use_command_history": true
+    },
+    "completion_detail_alignment": "left",
+    "completion_menu_item_kind": "off",
+    "completion_menu_scrollbar": "never",
+    "completions": {
+        "lsp": true,
+        "lsp_fetch_timeout_ms": 0,
+        "lsp_insert_mode": "replace_suffix",
+        "words": "fallback",
+        "words_min_length": 3
     },
     "confirm_quit": true,
-    "debugger": { "dock": "left" },
+    "context_server_timeout": 60,
+    "context_servers": {},
+    "credentials_url": null,
+    "current_line_highlight": "all",
+    "cursor_animation": {
+        "enabled": false
+    },
+    "cursor_blink": true,
+    "cursor_shape": "bar",
+    "dap": {
+        "CodeLLDB": {
+            "env": {
+                "RUST_LOG": "info"
+            }
+        }
+    },
+    "debugger": {
+        "button": true,
+        "dock": "left",
+        "format_dap_log_messages": true,
+        "log_dap_communications": true,
+        "save_breakpoints": true,
+        "stepping_granularity": "line",
+        "timeout": 2000
+    },
+    "debuggers": [],
+    "default_open_behavior": "existing_window",
+    "dev": {
+        "instrumentation": {
+            "performance_profiler": {
+                "enabled": true
+            }
+        }
+    },
+    "dev_container_connections": null,
+    "dev_container_use_buildkit": null,
     "diagnostics": {
+        "button": true,
+        "include_warnings": true,
         "inline": {
             "enabled": true,
             "max_severity": "error",
             "min_column": 124,
-            "padding": 0
+            "padding": 0,
+            "update_debounce_ms": 150
+        },
+        "lsp_pull_diagnostics": {
+            "debounce_ms": 50,
+            "enabled": true
         }
     },
-    "file_finder": { "modal_max_width": "medium" },
+    "diagnostics_max_severity": "all",
+    "diff_view_style": "split",
+    "disable_ai": false,
+    "document_folding_ranges": "off",
+    "document_symbols": "off",
+    "double_click_in_multibuffer": "select",
+    "drag_and_drop_selection": {
+        "delay": 300,
+        "enabled": true
+    },
+    "drop_target_size": 0.2,
+    "edit_predictions": {
+        "allow_data_collection": "default",
+        "codestral": {
+            "api_url": "https://codestral.mistral.ai",
+            "max_tokens": 150,
+            "model": "codestral-latest",
+            "prediction_debounce": 150
+        },
+        "copilot": {
+            "enable_next_edit_suggestions": true,
+            "enterprise_uri": null,
+            "prediction_debounce": 75,
+            "proxy": null,
+            "proxy_no_verify": null
+        },
+        "disabled_globs": [
+            "**/.env*",
+            "**/*.pem",
+            "**/*.key",
+            "**/*.cert",
+            "**/*.crt",
+            "**/.dev.vars",
+            "**/secrets.yml",
+            "**/.zed/settings.json",
+            "/**/zed/settings.json",
+            "/**/zed/keymap.json"
+        ],
+        "mercury": {
+            "prediction_debounce": 0
+        },
+        "mode": "eager",
+        "ollama": {
+            "api_url": "http://localhost:11434",
+            "max_output_tokens": 64,
+            "model": "qwen2.5-coder:7b-base",
+            "prediction_debounce": 0,
+            "prompt_format": "infer"
+        },
+        "open_ai_compatible_api": {
+            "api_url": "",
+            "max_output_tokens": 64,
+            "model": "",
+            "prediction_debounce": 0,
+            "prompt_format": "infer"
+        },
+        "provider": "zed",
+        "zed": {
+            "prediction_debounce": 0
+        }
+    },
+    "edit_predictions_disabled_in": [],
+    "enable_language_server": true,
+    "ensure_final_newline_on_save": true,
+    "excerpt_context_lines": 2,
+    "expand_excerpt_lines": 5,
+    "extend_comment_on_newline": true,
+    "extend_list_on_newline": true,
+    "fast_scroll_sensitivity": 4,
+    "file_finder": {
+        "file_icons": true,
+        "include_channels": false,
+        "include_ignored": "smart",
+        "modal_max_width": "medium",
+        "skip_focus_for_active_in_search": true
+    },
+    "file_scan_depth": 5,
+    "file_scan_exclusions": [
+        "**/.git",
+        "**/.svn",
+        "**/.hg",
+        "**/.jj",
+        "**/.sl",
+        "**/.repo",
+        "**/CVS",
+        "**/.DS_Store",
+        "**/Thumbs.db",
+        "**/.classpath",
+        "**/.settings"
+    ],
+    "file_scan_inclusions": [".env*"],
+    "file_types": {
+        "JSONC": [
+            "**/.zed/*.json",
+            "**/.vscode/**/*.json",
+            "**/{zed,Zed}/{settings,keymap,tasks,debug}.json",
+            "tsconfig*.json"
+        ],
+        "Markdown": [".rules", ".cursorrules", ".windsurfrules", ".clinerules"],
+        "Shell Script": [".env.*"]
+    },
+    "focus_follows_mouse": {
+        "debounce_ms": 250,
+        "enabled": false
+    },
+    "format_on_save": "off",
+    "formatter": "auto",
+    "fullscreen_mode": "native",
     "git": {
+        "blame": {
+            "show_avatar": true
+        },
+        "branch_picker": {
+            "show_author_name": true
+        },
+        "diff_base": "head",
+        "disable_git": false,
+        "enable_diff": true,
+        "enable_status": true,
+        "file_diff": {
+            "show_full_file": true
+        },
+        "git_gutter": "tracked_files",
+        "gutter_debounce": 0,
+        "hunk_style": "staged_hollow",
         "inline_blame": {
+            "delay_ms": 1000,
+            "enabled": true,
+            "location": "inline",
             "min_column": 124,
             "padding": 0,
-            "delay_ms": 1000
-        }
+            "show_commit_summary": false
+        },
+        "path_style": "file_name_first",
+        "show_stage_restore_buttons": true,
+        "worktree_directory": "../worktrees"
     },
+    "git_commit_buffer_font_size": 12,
+    "git_hosting_providers": [],
+    "git_panel": {
+        "button": true,
+        "collapse_untracked_diff": false,
+        "commit_title_max_length": 0,
+        "default_width": 360,
+        "diff_stats": true,
+        "dock": "right",
+        "entry_primary_click_action": "project_diff",
+        "fallback_branch_name": "main",
+        "file_icons": false,
+        "folder_indicator": "icon",
+        "group_by": "status",
+        "scrollbar": {},
+        "show_count_badge": false,
+        "sort_by": "path",
+        "starts_open": false,
+        "status_style": "icon",
+        "tree_view": true
+    },
+    "global_lsp_settings": {
+        "button": true,
+        "max_buffer_line_length": 20000,
+        "notifications": {
+            "dismiss_timeout_ms": 5000
+        },
+        "request_timeout": 120,
+        "semantic_token_rules": []
+    },
+    "go_to_definition_fallback": "find_all_references",
+    "go_to_definition_scroll_strategy": "center",
+    "granted_extension_capabilities": [
+        {
+            "args": ["**"],
+            "command": "*",
+            "kind": "process:exec"
+        },
+        {
+            "host": "*",
+            "kind": "download_file",
+            "path": ["**"]
+        },
+        {
+            "kind": "npm:install",
+            "package": "*"
+        }
+    ],
     "gutter": {
-        "folds": false,
         "bookmarks": false,
+        "breakpoints": true,
+        "folds": false,
+        "git_gutter_width": "default",
+        "line_numbers": true,
+        "min_line_number_digits": 4,
         "runnables": false
     },
+    "hard_tabs": false,
+    "helix_mode": false,
+    "hidden_files": ["**/.*"],
+    "hide_mouse": "on_typing_and_action",
+    "horizontal_scroll_margin": 5,
+    "hover_popover_delay": 300,
+    "hover_popover_enabled": true,
+    "hover_popover_hiding_delay": 300,
+    "hover_popover_sticky": true,
     "icon_theme": "Catppuccin Macchiato",
-    "indent_guides": {
-        "enabled": true,
-        "coloring": "indent_aware"
+    "image_viewer": {
+        "unit": "binary"
     },
+    "indent_guides": {
+        "active_line_width": 1,
+        "background_coloring": "disabled",
+        "coloring": "indent_aware",
+        "enabled": true,
+        "line_width": 1
+    },
+    "indent_list_on_tab": true,
+    "inlay_hints": {
+        "edit_debounce_ms": 700,
+        "enabled": false,
+        "scroll_debounce_ms": 50,
+        "show_background": false,
+        "show_other_hints": true,
+        "show_parameter_hints": true,
+        "show_type_hints": true,
+        "show_value_hints": true,
+        "toggle_on_modifiers_press": {
+            "alt": false,
+            "control": false,
+            "function": false,
+            "platform": false,
+            "shift": false
+        }
+    },
+    "inline_code_actions": true,
+    "instrumentation": {
+        "performance_profiler": {
+            "enabled": false
+        }
+    },
+    "journal": {
+        "hour_format": "hour12",
+        "path": "~"
+    },
+    "jsx_tag_auto_close": {
+        "enabled": true
+    },
+    "jupyter": {
+        "enabled": true,
+        "kernel_selections": {}
+    },
+    "language_detection": true,
+    "language_models": {
+        "anthropic": {
+            "api_url": "https://api.anthropic.com"
+        },
+        "anthropic_compatible": {},
+        "bedrock": {},
+        "deepseek": {
+            "api_url": "https://api.deepseek.com/v1"
+        },
+        "google": {
+            "api_url": "https://generativelanguage.googleapis.com"
+        },
+        "llama.cpp": {
+            "api_url": "http://localhost:8080"
+        },
+        "lmstudio": {
+            "api_url": "http://localhost:1234/api/v0"
+        },
+        "mistral": {
+            "api_url": "https://api.mistral.ai/v1"
+        },
+        "ollama": {
+            "api_url": "http://localhost:11434"
+        },
+        "open_router": {
+            "api_url": "https://openrouter.ai/api/v1"
+        },
+        "openai": {
+            "api_url": "https://api.openai.com/v1"
+        },
+        "openai_compatible": {},
+        "opencode": {
+            "api_url": "https://opencode.ai/zen"
+        },
+        "vercel_ai_gateway": {
+            "api_url": "https://ai-gateway.vercel.sh/v1"
+        },
+        "x_ai": {
+            "api_url": "https://api.x.ai/v1"
+        },
+        "zed.dev": {}
+    },
+    "language_servers": ["..."],
+    "languages": {
+        "Astro": {
+            "format_on_save": "on",
+            "language_servers": ["astro-language-server", "..."],
+            "prettier": {
+                "allowed": true,
+                "plugins": ["prettier-plugin-astro"]
+            }
+        },
+        "Blade": {
+            "prettier": {
+                "allowed": true
+            }
+        },
+        "C": {
+            "prettier": {
+                "allowed": false
+            },
+            "use_on_type_format": false
+        },
+        "C++": {
+            "prettier": {
+                "allowed": false
+            },
+            "use_on_type_format": false
+        },
+        "CSS": {
+            "prettier": {
+                "allowed": true
+            }
+        },
+        "CSharp": {
+            "language_servers": ["roslyn", "!csharp-ls", "!omnisharp", "..."]
+        },
+        "Dart": {
+            "format_on_save": "on",
+            "tab_size": 2
+        },
+        "Diff": {
+            "ensure_final_newline_on_save": false,
+            "remove_trailing_whitespace_on_save": false,
+            "show_edit_predictions": false
+        },
+        "EEx": {
+            "format_on_save": "on",
+            "language_servers": ["elixir-ls", "!expert", "!dexter", "!next-ls", "!lexical", "..."]
+        },
+        "Elixir": {
+            "format_on_save": "on",
+            "language_servers": [
+                "elixir-ls",
+                "!expert",
+                "!dexter",
+                "!next-ls",
+                "!lexical",
+                "!emmet-language-server",
+                "..."
+            ]
+        },
+        "Elm": {
+            "format_on_save": "on",
+            "tab_size": 4
+        },
+        "Erlang": {
+            "language_servers": ["erlang-ls", "!elp", "..."]
+        },
+        "Git Commit": {
+            "allow_rewrap": "anywhere",
+            "preferred_line_length": 72,
+            "soft_wrap": "editor_width"
+        },
+        "Go": {
+            "code_actions_on_format": {
+                "source.organizeImports": true
+            },
+            "debuggers": ["Delve"],
+            "format_on_save": "on",
+            "hard_tabs": true
+        },
+        "GraphQL": {
+            "format_on_save": "on",
+            "prettier": {
+                "allowed": true
+            }
+        },
+        "HEEx": {
+            "format_on_save": "on",
+            "language_servers": ["elixir-ls", "!expert", "!dexter", "!next-ls", "!lexical", "..."]
+        },
+        "HTML": {
+            "prettier": {
+                "allowed": true
+            }
+        },
+        "HTML+ERB": {
+            "language_servers": ["herb", "!ruby-lsp", "..."]
+        },
+        "JS+ERB": {
+            "language_servers": ["!ruby-lsp", "..."]
+        },
+        "JSON": {
+            "prettier": {
+                "allowed": true
+            }
+        },
+        "JSONC": {
+            "prettier": {
+                "allowed": true
+            }
+        },
+        "Java": {
+            "prettier": {
+                "allowed": true,
+                "plugins": ["prettier-plugin-java"]
+            }
+        },
+        "JavaScript": {
+            "language_servers": ["!typescript-language-server", "vtsls", "..."],
+            "prettier": {
+                "allowed": true
+            }
+        },
+        "Kotlin": {
+            "format_on_save": "on",
+            "language_servers": ["!kotlin-language-server", "kotlin-lsp", "..."]
+        },
+        "LaTeX": {
+            "formatter": "language_server",
+            "language_servers": ["texlab", "..."],
+            "prettier": {
+                "allowed": true,
+                "plugins": ["prettier-plugin-latex"]
+            }
+        },
+        "Markdown": {
+            "allow_rewrap": "anywhere",
+            "completions": {
+                "words": "disabled"
+            },
+            "prettier": {
+                "allowed": true
+            },
+            "remove_trailing_whitespace_on_save": false,
+            "soft_wrap": "editor_width",
+            "use_on_type_format": false
+        },
+        "PHP": {
+            "language_servers": ["phpactor", "!intelephense", "!phptools", "!phpantom", "..."],
+            "prettier": {
+                "allowed": true,
+                "parser": "php",
+                "plugins": ["@prettier/plugin-php"]
+            }
+        },
+        "Plain Text": {
+            "allow_rewrap": "anywhere",
+            "completions": {
+                "words": "disabled"
+            },
+            "soft_wrap": "editor_width"
+        },
+        "Proto": {
+            "language_servers": ["buf", "!protols", "!protobuf-language-server", "..."]
+        },
+        "Python": {
+            "code_actions_on_format": {
+                "source.organizeImports.ruff": true
+            },
+            "debuggers": ["Debugpy"],
+            "formatter": {
+                "language_server": {
+                    "name": "ruff"
+                }
+            },
+            "language_servers": ["basedpyright", "ruff", "!ty", "!pyrefly", "!pyright", "!pylsp", "..."]
+        },
+        "Ruby": {
+            "language_servers": [
+                "solargraph",
+                "!ruby-lsp",
+                "!rubocop",
+                "!sorbet",
+                "!steep",
+                "!kanayago",
+                "!fuzzy-ruby-server",
+                "..."
+            ]
+        },
+        "Rust": {
+            "debuggers": ["CodeLLDB"],
+            "format_on_save": "on"
+        },
+        "SCSS": {
+            "prettier": {
+                "allowed": true
+            }
+        },
+        "Starlark": {
+            "format_on_save": "on",
+            "language_servers": ["starpls", "!buck2-lsp", "!tilt", "..."]
+        },
+        "Svelte": {
+            "language_servers": ["svelte-language-server", "..."],
+            "prettier": {
+                "allowed": true,
+                "plugins": ["prettier-plugin-svelte"]
+            }
+        },
+        "SystemVerilog": {
+            "language_servers": ["slang", "!verible", "!veridian", "!svls", "..."],
+            "use_on_type_format": false
+        },
+        "TSX": {
+            "language_servers": ["!typescript-language-server", "vtsls", "..."],
+            "prettier": {
+                "allowed": true
+            }
+        },
+        "Twig": {
+            "prettier": {
+                "allowed": true
+            }
+        },
+        "TypeScript": {
+            "language_servers": ["!typescript-language-server", "vtsls", "..."],
+            "prettier": {
+                "allowed": true
+            }
+        },
+        "Vue.js": {
+            "language_servers": ["vue-language-server", "vtsls", "..."],
+            "prettier": {
+                "allowed": true
+            }
+        },
+        "XML": {
+            "prettier": {
+                "allowed": true,
+                "plugins": ["@prettier/plugin-xml"]
+            }
+        },
+        "YAML": {
+            "prettier": {
+                "allowed": true
+            }
+        },
+        "YAML+ERB": {
+            "language_servers": ["!ruby-lsp", "..."]
+        },
+        "Zig": {
+            "format_on_save": "on",
+            "language_servers": ["zls", "..."]
+        }
+    },
+    "line_ending": "detect",
+    "line_indicator_format": "long",
+    "linked_edits": true,
+    "linux": {},
+    "load_direnv": "direct",
+    "log": {},
+    "lsp": {},
+    "lsp_document_colors": "inlay",
+    "lsp_document_links": true,
+    "lsp_highlight_debounce": 75,
+    "lsp_results_location": "multi_buffer",
+    "macos": {},
     "markdown_preview": {
+        "code_font_family": null,
         "font_family": "Comic Code Ligatures",
+        "font_size": null,
+        "limit_content_width": true,
+        "max_width": 800,
+        "open_markdown_files_in_preview": false,
         "theme": "Rust & Brown"
+    },
+    "max_tabs": null,
+    "middle_click_paste": true,
+    "minimap": {
+        "current_line_highlight": null,
+        "display_in": "active_editor",
+        "max_width_columns": 80,
+        "show": "never",
+        "thumb": "always",
+        "thumb_border": "left_open"
+    },
+    "minimum_contrast_for_highlights": 45,
+    "minimum_split_diff_width": 100,
+    "modeline_lines": 5,
+    "mouse_wheel_zoom": false,
+    "multi_cursor_modifier": "alt",
+    "nightly": {
+        "instrumentation": {
+            "performance_profiler": {
+                "enabled": true
+            }
+        }
+    },
+    "node": {
+        "ignore_system_version": false,
+        "npm_path": null,
+        "path": null
+    },
+    "on_last_window_closed": "platform_default",
+    "on_new_window": "launchpad",
+    "outline_panel": {
+        "auto_fold_dirs": true,
+        "auto_reveal_entries": true,
+        "button": true,
+        "default_width": 300,
+        "dock": "right",
+        "expand_outlines_with_depth": 100,
+        "file_icons": true,
+        "folder_indicator": "icon",
+        "git_status": true,
+        "indent_guides": {
+            "show": "always"
+        },
+        "indent_size": 20,
+        "multi_buffer_hide_symbols": false,
+        "scrollbar": {
+            "show": null
+        }
     },
     "pane_split_direction_horizontal": "down",
     "pane_split_direction_vertical": "right",
     "preferred_line_length": 120,
-    "project_panel": {
-        "folder_indicator": "icon",
-        "hide_gitignore": false,
-        "hide_root": true,
-        "show_diagnostics": "off",
-        "bold_folder_labels": false,
-        "git_status": false,
-        "auto_fold_dirs": false
+    "prettier": {
+        "allowed": false,
+        "parser": "",
+        "plugins": []
     },
+    "prevent_sharing_in_public_channels": false,
+    "preview": {},
+    "preview_tabs": {
+        "enable_keep_preview_on_code_navigation": false,
+        "enable_preview_file_from_code_navigation": true,
+        "enable_preview_from_file_finder": false,
+        "enable_preview_from_multibuffer": true,
+        "enable_preview_from_project_panel": true,
+        "enable_preview_multibuffer_from_code_navigation": false,
+        "enabled": true
+    },
+    "private_files": ["**/.env*", "**/*.pem", "**/*.key", "**/*.cert", "**/*.crt", "**/secrets.yml"],
+    "profiles": {},
+    "project_panel": {
+        "auto_fold_dirs": false,
+        "auto_open": {
+            "on_create": true,
+            "on_drop": true,
+            "on_paste": true
+        },
+        "auto_reveal_entries": true,
+        "bold_folder_labels": false,
+        "button": true,
+        "default_width": 240,
+        "diagnostic_badges": false,
+        "dock": "right",
+        "drag_and_drop": true,
+        "entry_spacing": "comfortable",
+        "file_icons": true,
+        "folder_indicator": "icon",
+        "git_status": false,
+        "git_status_indicator": false,
+        "hide_gitignore": false,
+        "hide_hidden": false,
+        "hide_root": true,
+        "indent_guides": {
+            "show": "always"
+        },
+        "indent_size": 20,
+        "scrollbar": {
+            "horizontal_scroll": true,
+            "show": null
+        },
+        "show_diagnostics": "off",
+        "sort_mode": "directories_first",
+        "sort_order": "default",
+        "starts_open": true,
+        "sticky_scroll": true,
+        "title_tooltip_delay": "default"
+    },
+    "proxy": "",
+    "read_only_files": [],
+    "read_ssh_config": true,
+    "redact_private_values": false,
+    "reduce_motion": "off",
     "relative_line_numbers": "enabled",
-    "scrollbar": { "show": "always" },
-    "search": {},
+    "remove_trailing_whitespace_on_save": true,
+    "repl": {
+        "max_columns": 128,
+        "max_lines": 32,
+        "output_max_height_lines": 0,
+        "output_max_width_columns": 0
+    },
+    "resize_all_panels_in_dock": ["left"],
+    "restore_on_file_reopen": true,
+    "restore_on_startup": "last_session",
+    "reveal_if_open": false,
+    "rounded_selection": true,
+    "scan_symlinks": "expanded",
+    "scroll_beyond_last_line": "one_page",
+    "scroll_sensitivity": 1,
+    "scrollbar": {
+        "axes": {
+            "horizontal": true,
+            "vertical": true
+        },
+        "cursors": true,
+        "diagnostics": "all",
+        "git_diff": true,
+        "search_results": true,
+        "selected_symbol": true,
+        "selected_text": true,
+        "show": "always"
+    },
+    "search": {
+        "button": true,
+        "case_sensitive": false,
+        "center_on_match": false,
+        "include_ignored": false,
+        "regex": false,
+        "search_on_type": true,
+        "whole_word": false
+    },
+    "search_wrap": true,
+    "seed_search_query_from_cursor": "always",
+    "selection_highlight": true,
+    "semantic_tokens": "off",
+    "server_url": "https://zed.dev",
+    "session": {
+        "restore_unsaved_buffers": true,
+        "trust_all_worktrees": false
+    },
     "show_call_status_icon": false,
+    "show_completion_documentation": true,
+    "show_completions_on_input": true,
     "show_edit_predictions": false,
+    "show_signature_help_after_edits": false,
     "show_whitespaces": "selection",
-    "status_bar": { "experimental.show": false },
+    "show_wrap_guides": true,
+    "snippet_sort_order": "inline",
+    "soft_wrap": "none",
+    "ssh_connections": [],
+    "stable": {},
+    "status_bar": {
+        "active_encoding_button": "non_utf8",
+        "active_language_button": true,
+        "cursor_position_button": true,
+        "experimental.show": false,
+        "line_endings_button": false,
+        "pending_keystrokes_indicator": true,
+        "show_active_file": false
+    },
+    "sticky_scroll": {
+        "enabled": false
+    },
     "tab_bar": {
+        "show": true,
         "show_nav_history_buttons": false,
+        "show_pinned_tabs_in_separate_row": false,
         "show_tab_bar_buttons": false
     },
+    "tab_size": 4,
     "tabs": {
-        "show_close_button": "hidden",
+        "activate_on_close": "history",
+        "close_position": "right",
         "file_icons": true,
-        "git_status": true
+        "git_status": true,
+        "show_close_button": "hidden",
+        "show_diagnostics": "off"
+    },
+    "tasks": {
+        "enabled": true,
+        "prefer_lsp": true,
+        "variables": {}
+    },
+    "telemetry": {
+        "anthropic_retention": false,
+        "diagnostics": true,
+        "metrics": true
     },
     "terminal": {
+        "alternate_scroll": "on",
         "bell": "system",
+        "blinking": "terminal_controlled",
+        "button": true,
         "copy_on_select": true,
-        "font_family": "Comic Code Ligatures"
+        "cursor_shape": "block",
+        "default_height": 320,
+        "default_width": 640,
+        "detect_venv": {
+            "on": {
+                "activate_script": "default",
+                "conda_manager": "auto",
+                "directories": [".env", "env", ".venv", "venv"]
+            }
+        },
+        "dock": "bottom",
+        "env": {},
+        "flexible": true,
+        "font_family": "Comic Code Ligatures",
+        "font_weight": 400,
+        "keep_selection_on_copy": true,
+        "line_height": "standard",
+        "max_scroll_history_lines": 10000,
+        "minimum_contrast": 45,
+        "open_links_in_mouse_mode": true,
+        "option_as_meta": false,
+        "path_hyperlink_regexes": [
+            "File \"(?<path>[^\"]+)\", line (?<line>[0-9]+)",
+            [
+                "(?x)",
+                "(?<path>",
+                "    (",
+                "        # multi-char path: first char (not opening delimiter, space, or box drawing char)",
+                "        [^({\\[<\"'`\\ \\u2500-\\u257F]",
+                "        # middle chars: non-space, and colon/paren only if not followed by digit/paren/space",
+                "        ([^\\ :(]|[:(][^0-9()\\ ])*",
+                "        # last char: not closing delimiter or colon",
+                "        [^()}\\]>\"'`.,;:\\ ]",
+                "    |",
+                "        # single-char path: not delimiter, punctuation, space, or box drawing char",
+                "        [^(){}\\[\\]<>\"'`.,;:\\ \\u2500-\\u257F]",
+                "    )",
+                "    # optional line/column suffix (included in path for PathWithPosition::parse_str)",
+                "    (:+[0-9]+(:[0-9]+)?|:?\\([0-9]+([,:]?[0-9]+)?\\))?",
+                ")"
+            ]
+        ],
+        "path_hyperlink_timeout_ms": 1,
+        "scroll_multiplier": 1,
+        "scrollbar": {
+            "show": null
+        },
+        "shell": "system",
+        "show_count_badge": false,
+        "starts_open": false,
+        "toolbar": {
+            "breadcrumbs": false
+        },
+        "working_directory": "current_project_directory"
     },
+    "text_rendering_mode": "platform_default",
     "theme": "Rust & Brown",
+    "theme_overrides": {},
     "title_bar": {
+        "button_layout": "platform_default",
         "show_branch_name": false,
+        "show_branch_status_icon": false,
+        "show_menus": false,
         "show_onboarding_banner": false,
+        "show_project_items": true,
         "show_sign_in": false,
-        "show_user_menu": false
+        "show_user_menu": false,
+        "show_user_picture": true,
+        "show_worktree_name": true
     },
     "toolbar": {
-        "breadcrumbs": false,
         "agent_review": false,
-        "quick_actions": false
+        "breadcrumbs": false,
+        "code_actions": false,
+        "quick_actions": false,
+        "selections_menu": true
     },
+    "ui_font_fallbacks": null,
     "ui_font_family": "Comic Code Ligatures",
-    "vim_mode": true
+    "ui_font_features": {
+        "calt": false
+    },
+    "ui_font_size": 16,
+    "ui_font_weight": 400,
+    "unnecessary_code_fade": 0.3,
+    "use_auto_surround": true,
+    "use_autoclose": true,
+    "use_on_type_format": true,
+    "use_podman": null,
+    "use_smartcase_search": false,
+    "use_system_path_prompts": true,
+    "use_system_prompts": true,
+    "use_system_window_tabs": false,
+    "vertical_scroll_margin": 3,
+    "vim": {
+        "cursor_shape": {
+            "insert": "inherit",
+            "normal": "block",
+            "replace": "underline",
+            "visual": "block"
+        },
+        "custom_digraphs": {},
+        "default_mode": "normal",
+        "gdefault": false,
+        "highlight_on_yank_duration": 200,
+        "show_edit_predictions_in_normal_mode": false,
+        "toggle_relative_line_numbers": false,
+        "use_regex_search": true,
+        "use_smartcase_find": false,
+        "use_system_clipboard": "always"
+    },
+    "vim_mode": true,
+    "when_closing_with_no_tabs": "platform_default",
+    "which_key": {
+        "delay_ms": 1000,
+        "enabled": false
+    },
+    "whitespace_map": {
+        "space": "•",
+        "tab": "→"
+    },
+    "window_decorations": "client",
+    "window_title_format": "${projectName}${separator}${fileName}",
+    "window_title_separator": " — ",
+    "windows": {
+        "languages": {
+            "PHP": {
+                "language_servers": ["intelephense", "!phpactor", "!phptools", "!phpantom", "..."]
+            }
+        }
+    },
+    "word_diff_enabled": true,
+    "wrap_guides": [],
+    "wsl_connections": null,
+    "zoomed_padding": true
 }
