@@ -69,7 +69,7 @@ function list_directory_alias() {
 }
 
 function custom_bash_rc() {
-    CUSTOM_BASH_RC_PATH="${HOME}/custom.bashrc"
+    CUSTOM_BASH_RC_PATH="${HOME}/.custom.bashrc"
 
     if ! path_exists "${CUSTOM_BASH_RC_PATH}"; then
         return
