@@ -129,6 +129,19 @@ function typescript_toolchain() {
     . "/home/hpatel/.config/vite-plus/env"
 }
 
+
+function swap_keys() {
+    if ! check_command "gsettings"; then
+        return
+    fi
+
+    if ! path_exists "/run/user/$(id -u)/bus"; then
+        return
+    fi
+
+    gsettings set org.gnome.desktop.input-sources xkb-options "['caps:swapescape']"
+}
+
 function run() {
     if ! is_interactive; then
         return
@@ -146,6 +159,7 @@ function run() {
     swap_capslock_and_esc
     fuzzy_finder
     typescript_toolchain
+    swap_keys
     start_auto_suggestion
 }
 
