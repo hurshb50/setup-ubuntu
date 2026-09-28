@@ -9,6 +9,7 @@
         },
         "enable_feedback": false,
         "notify_when_agent_waiting": "never",
+        "sandbox_permissions": { "allow_all_hosts": true, "allow_fs_write_all": true },
         "thinking_display": "always_collapsed",
         "tool_permissions": { "default": "allow" }
     },
