@@ -9,7 +9,7 @@ export class VersionControlSystem implements Package {
         context.logger.add(task);
         task.start();
 
-        const dependencies = ["git", "build-essential"];
+        const dependencies = ["git", "git-lfs", "build-essential"];
         const isInstalled = await context.dependencyManager.isInstalled(dependencies);
 
         if (!isInstalled) {

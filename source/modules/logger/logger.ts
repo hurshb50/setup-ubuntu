@@ -8,6 +8,9 @@ export class Logger {
     status: "idle" | "in-progress" | "done";
     private tasks: Task[];
     private tick: number;
+    private cursorHidden: boolean;
+    private onExit: () => void;
+    private onSignal: (signal: NodeJS.Signals) => void;
     private static check = "✔";
     private static dots = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
     private static defaultColumns = 150;
@@ -16,6 +19,13 @@ export class Logger {
         this.status = "idle";
         this.tasks = [];
         this.tick = 0;
+        this.cursorHidden = false;
+        this.onExit = () => this.restore();
+
+        this.onSignal = (signal) => {
+            this.restore();
+            process.kill(process.pid, signal);
+        };
     }
 
     public add(task: Task): void {
@@ -26,6 +36,9 @@ export class Logger {
         if (this.status !== "idle") throw new Error(`Cannot start task logger when status is '${this.status}'.`);
 
         this.status = "in-progress";
+        process.once("exit", this.onExit);
+        process.once("SIGINT", this.onSignal);
+        process.once("SIGTERM", this.onSignal);
         void this.loop();
     }
 
@@ -38,6 +51,8 @@ export class Logger {
     private async loop(): Promise<void> {
         const minimumIntervalMilliSeconds = 80;
 
+        this.log(escapes.cursorHide);
+        this.cursorHidden = true;
         this.newline();
         this.banner("Ubuntu Setup");
         this.newline();
@@ -54,7 +69,18 @@ export class Logger {
 
         this.write();
         this.newline(this.tasks.length + 1);
+        this.restore();
+    }
+
+    private restore(): void {
+        if (!this.cursorHidden) return;
+
         this.log(styles.reset.close);
+        this.log(escapes.cursorShow);
+        this.cursorHidden = false;
+        process.off("exit", this.onExit);
+        process.off("SIGINT", this.onSignal);
+        process.off("SIGTERM", this.onSignal);
     }
 
     private write(): void {

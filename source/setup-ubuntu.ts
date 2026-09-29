@@ -10,6 +10,7 @@ import { AgentRules } from "./modules/agent-rules/agent-rules";
 import { AgentSkills } from "./modules/agent-skills/agent-skills";
 import { AutoSuggestion } from "./modules/auto-suggestion/auto-suggestion";
 import { Browser } from "./modules/browser/browser";
+import { Clipboard } from "./modules/clipboard/clipboard";
 import { CodeEditor } from "./modules/code-editor/code-editor";
 import { CodeHost } from "./modules/code-host/code-host";
 import { ContainerEngine } from "./modules/container-engine/container-engine";
@@ -39,6 +40,7 @@ program
             new AgentSkills(),
             new AutoSuggestion(),
             new Browser(),
+            new Clipboard(),
             new CodeEditor(),
             new CodeHost(),
             new ContainerEngine(),
