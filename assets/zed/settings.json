@@ -17,7 +17,7 @@
     "agent_ui_font_family": "Comic Code Ligatures",
     "auto_install_extensions": {
         "catppuccin-icons": true,
-        "rust-brown": true
+        "rust-and-brown": true
     },
     "buffer_font_family": "Comic Code Ligatures",
     "colorize_brackets": true,
