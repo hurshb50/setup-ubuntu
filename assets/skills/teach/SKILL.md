@@ -1,6 +1,6 @@
 ---
 name: teach
-description: Teach me a concept from the ground up, assuming no prior knowledge and no context.
+description: Teach me a concept from the ground up.
 disable-model-invocation: true
 ---
 
@@ -12,6 +12,5 @@ Assume no prior knowledge and no context.
 
 ## The lesson
 
-- Define every term before use, even basic ones
 - Each section depends on the ones before
-- Open with an example, then a definition
+- Define every term before use, even basic ones
