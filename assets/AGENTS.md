@@ -16,3 +16,12 @@
 - Minimal
 - Coherent
 - Avoid verbosity
+
+# Sub Agents
+
+- No nested spawning
+- Codebase exploration
+- Web searches
+- Writing
+- Images
+- Logs
