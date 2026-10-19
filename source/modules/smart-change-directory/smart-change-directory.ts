@@ -13,8 +13,10 @@ export class SmartChangeDirectory implements Package {
 
         const binaryDirectoryPath = path.join(context.directories.home, ".local", "bin");
         const binaryFilePath = path.join(binaryDirectoryPath, "zoxide");
+        const statistics = await fs.stat(binaryFilePath, { throwIfNoEntry: false });
+        const isInstalled = statistics !== undefined;
 
-        if (await pathExists(binaryFilePath)) {
+        if (isInstalled) {
             task.finish();
             return;
         }
@@ -26,14 +28,5 @@ export class SmartChangeDirectory implements Package {
         );
 
         task.finish();
-    }
-}
-
-async function pathExists(filePath: string): Promise<boolean> {
-    try {
-        await fs.access(filePath);
-        return true;
-    } catch {
-        return false;
     }
 }
