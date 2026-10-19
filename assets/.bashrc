@@ -104,7 +104,7 @@ function start_auto_suggestion() {
     fi
 
     ble-attach
-    # clear
+    clear
 }
 
 function fuzzy_finder() {
