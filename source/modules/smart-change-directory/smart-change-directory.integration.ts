@@ -1,4 +1,5 @@
 import os from "os";
+import path from "path";
 import util from "util";
 import childProcess from "child_process";
 import { beforeAll, expect, suite, test, vi } from "vite-plus/test";
@@ -18,23 +19,35 @@ suite("Smart Change Directory", () => {
         await new SmartChangeDirectory().install(context);
     });
 
+    const binaryFilePath = path.join(os.homedir(), ".local", "bin", "zoxide");
+
     test("makes zoxide available", async () => {
         const exec = util.promisify(childProcess.exec);
-        const { stdout } = await exec("zoxide --version");
+        const { stdout } = await exec(`${binaryFilePath} --version`);
         expect(stdout).toMatch(/^zoxide \d+\.\d+\.\d+/);
+    });
+
+    test("replaces cd without recursing", async () => {
+        const exec = util.promisify(childProcess.exec);
+        const script = `eval "$(${binaryFilePath} init bash --cmd cd)"; cd / && pwd`;
+        const { stdout } = await exec(`bash -c '${script}'`);
+        expect(stdout.trim()).toBe("/");
     });
 
     test("skips the installation when zoxide is already installed", async () => {
         const update = vi.spyOn(context.dependencyManager, "update");
         const install = vi.spyOn(context.dependencyManager, "install");
+        const exec = vi.spyOn(childProcess, "exec");
 
         try {
             await new SmartChangeDirectory().install(context);
             expect(update).not.toHaveBeenCalled();
             expect(install).not.toHaveBeenCalled();
+            expect(exec).not.toHaveBeenCalled();
         } finally {
             update.mockRestore();
             install.mockRestore();
+            exec.mockRestore();
         }
     });
 });
