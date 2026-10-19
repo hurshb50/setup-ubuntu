@@ -104,7 +104,7 @@ function start_auto_suggestion() {
     fi
 
     ble-attach
-    clear
+    # clear
 }
 
 function fuzzy_finder() {
@@ -126,7 +126,7 @@ function fuzzy_finder() {
 }
 
 function typescript_toolchain() {
-    . "/home/hpatel/.config/vite-plus/env"
+    . "$HOME/.config/vite-plus/env"
 }
 
 
@@ -136,6 +136,10 @@ function swap_keys() {
     fi
 
     if ! path_exists "/run/user/$(id -u)/bus"; then
+        return
+    fi
+
+    if ! gsettings list-schemas 2>/dev/null | grep -qx "org.gnome.desktop.input-sources"; then
         return
     fi
 
@@ -156,7 +160,6 @@ function run() {
     list_directory_alias
     custom_bash_rc
     disable_legacy
-    swap_capslock_and_esc
     fuzzy_finder
     typescript_toolchain
     swap_keys
