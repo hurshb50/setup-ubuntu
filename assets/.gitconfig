@@ -12,7 +12,7 @@
 	autoSetupRemote = true
 
 [merge]
-	conflictStyle = zdiff3
+	conflictStyle = merge
 
 [diff]
 	algorithm = histogram
