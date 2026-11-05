@@ -1,7 +1,6 @@
 ---
 name: design-api
 description: Push an architecture forward. Interview me, fan out on widely varying designs, then build the API shape together.
-
 ---
 
 # Design API

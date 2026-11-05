@@ -1,7 +1,6 @@
 ---
 name: teach-concept
 description: Teach me a concept from the ground up.
-
 ---
 
 # Teach Concept
