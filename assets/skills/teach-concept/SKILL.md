@@ -1,10 +1,10 @@
 ---
-name: teach
+name: teach-concept
 description: Teach me a concept from the ground up.
 disable-model-invocation: true
 ---
 
-# Teach
+# Teach Concept
 
 Any concept, in one sitting, from the ground up.
 

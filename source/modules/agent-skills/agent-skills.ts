@@ -12,7 +12,8 @@ export class AgentSkills implements Package {
         const destinationDirectoryPath = path.join(context.directories.home, ".agents", "skills");
         const sourceDirectoryPath = path.join(context.directories.assets, "skills");
 
-        task.continue("Create global skills directory");
+        task.continue("Clear global skills directory");
+        await fs.rm(destinationDirectoryPath, { recursive: true, force: true });
         await fs.mkdir(destinationDirectoryPath, { recursive: true });
 
         task.continue("Copy agent skills");

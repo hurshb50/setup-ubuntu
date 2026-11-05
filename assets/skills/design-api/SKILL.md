@@ -1,10 +1,10 @@
 ---
-name: design
+name: design-api
 description: Push an architecture forward. Interview me, fan out on widely varying designs, then build the API shape together.
 disable-model-invocation: true
 ---
 
-# Design
+# Design API
 
 Turn a vague idea into one API shape.
 
