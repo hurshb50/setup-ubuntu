@@ -1,14 +1,14 @@
 ---
 name: explain-code
-description: Explain a selected code section to someone learning it.
+description: Explain all implementation code in the selected scope to someone learning it.
 ---
 
 # Explain Code
 
-Explain the selected code for a beginner.
+Explain all implementation code in scope for a beginner.
 
-- Stay focused on the selected section.
-- Verify details against surrounding code.
-- Explain unfamiliar terms and execution flow as needed.
-- Use examples or diagrams only when helpful.
-- Output the explanation, not your planning.
+- Cover every implementation part in scope; split large scopes into ordered chunks.
+- Explain each chunk's code, purpose, behavior, and connections.
+- Trace execution and data flow; verify context and define unfamiliar terms.
+- In every chunk, include a concrete example tracing temporary values step by step.
+- Exclude tests/configuration; output the complete explanation only.
