@@ -1,18 +1,14 @@
 ---
 name: explain-code
 description: Explain a selected code section to someone learning it.
-disable-model-invocation: true
 ---
 
 # Explain Code
 
-Explain one selected section of code.
+Explain the selected code for a beginner.
 
-Assume no prior knowledge.
-
-## The explanation
-
-- Define technical terms before using them
-- Explain purpose, inputs, output, and behavior
-- Stay within the selected section
-- Verify details against the code
+- Stay focused on the selected section.
+- Verify details against surrounding code.
+- Explain unfamiliar terms and execution flow as needed.
+- Use examples or diagrams only when helpful.
+- Output the explanation, not your planning.

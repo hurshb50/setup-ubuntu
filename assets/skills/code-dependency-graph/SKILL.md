@@ -1,18 +1,19 @@
 ---
 name: code-dependency-graph
-description: Trace what a selected code section uses and what uses it.
-disable-model-invocation: true
+description: Show lines in selected code that use dependencies.
 ---
 
-# Code Dependency Graph
+# Code Dependencies
 
-Trace dependencies for the selected code section.
+For each direct dependency used by the selected code:
 
-## The graph
+- Show the relevant selected-code line or short snippet.
+- Name the dependency and briefly explain it for a beginner.
+- Explain what role it plays in this code.
 
-- Inspect the code and its references
-- Show what the section depends on
-- Show what depends on the section
-- Use `A → B` to mean “B uses A”
-- Show direct relationships, not guesses
-- Mark dependencies outside the requested scope
+Use plain language. Assume the reader is unfamiliar with the terms.
+Keep explanations brief and focused on the selected code.
+Include file locations when available.
+Do not show dependency definitions or trace callers.
+Do not add diagrams or unrelated context.
+Output only the dependency snippets and explanations.

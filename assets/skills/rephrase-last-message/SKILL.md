@@ -1,7 +1,7 @@
 ---
 name: rephrase-last-message
 description: Rephrase the last agent message without changing its meaning.
-disable-model-invocation: true
+
 ---
 
 # Rephrase Last Message
