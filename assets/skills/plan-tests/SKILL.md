@@ -1,9 +1,9 @@
 ---
-name: test-planning
+name: plan-tests
 description: Plan reliable, behavior-focused tests without implementing them.
 ---
 
-# Test Planning
+# Plan Tests
 
 Plan tests for a selected function or class.
 
