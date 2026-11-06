@@ -1,5 +1,5 @@
 ---
-name: draft-pr
+name: draft-pull-request
 description: Create draft pull requests while preserving Git stack structure.
 ---
 
