@@ -66,8 +66,7 @@
     {
         "context": "Terminal",
         "bindings": {
-            "ctrl-j": ["terminal::SendKeystroke", "ctrl-j"],
-            "ctrl-alt-j": "workspace::ActivatePaneDown",
+            "ctrl-s": ["terminal::SendKeystroke", "ctrl-s"],
             "ctrl-p": ["terminal::SendKeystroke", "ctrl-p"],
             "ctrl-n": ["terminal::SendKeystroke", "ctrl-n"]
         }
