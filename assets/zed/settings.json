@@ -12,6 +12,7 @@
         "notify_when_agent_waiting": "never",
         "sandbox_permissions": { "allow_unsandboxed": true, "allow_all_hosts": true, "allow_fs_write_all": true },
         "thinking_display": "always_collapsed",
+        "threads_sidebar": { "position": "right" },
         "tool_permissions": { "default": "allow" }
     },
     "agent_buffer_font_family": "Comic Code Ligatures",
