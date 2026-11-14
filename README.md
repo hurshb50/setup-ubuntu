@@ -52,3 +52,28 @@ rm -rf \
 ```
 
 This deletes Chrome profiles and caches. Back them up first if needed.
+
+## Removing Firefox
+
+This removes Firefox from Snap, APT, or Flatpak installs. It also deletes local profiles and caches.
+
+```bash
+if command -v snap >/dev/null 2>&1 && snap list firefox >/dev/null 2>&1; then
+    sudo snap remove --purge firefox
+fi
+
+dpkg-query -W -f='${db:Status-Status} ${binary:Package}\n' 'firefox*' 2>/dev/null |
+    awk '$1 == "installed" { print $2 }' |
+    xargs -r sudo apt-get purge -y
+
+if command -v flatpak >/dev/null 2>&1 &&
+    flatpak info org.mozilla.firefox >/dev/null 2>&1; then
+    flatpak uninstall --delete-data -y org.mozilla.firefox
+fi
+
+rm -rf \
+    "$HOME/.mozilla/firefox" \
+    "$HOME/.cache/mozilla/firefox" \
+    "$HOME/snap/firefox" \
+    "$HOME/.var/app/org.mozilla.firefox"
+```
