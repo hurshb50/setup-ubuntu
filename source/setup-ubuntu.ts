@@ -61,7 +61,7 @@ program
                 home: os.homedir(),
             };
 
-            const installations = packages.map(({ install }) => install({ dependencyManager, directories, logger }));
+            const installations = packages.map((entry) => entry.install({ dependencyManager, directories, logger }));
             await Promise.all(installations);
         } finally {
             logger.stop();
