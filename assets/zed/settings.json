@@ -7,6 +7,7 @@
             "model": "deepseek-flash",
             "provider": "deepseek"
         },
+        "dock": "right",
         "enable_feedback": false,
         "notify_when_agent_waiting": "never",
         "sandbox_permissions": { "allow_unsandboxed": true, "allow_all_hosts": true, "allow_fs_write_all": true },
@@ -51,6 +52,7 @@
         }
     },
     "git_panel": {
+        "dock": "left",
         "tree_view": true
     },
     "gutter": {
@@ -73,6 +75,7 @@
     "project_panel": {
         "auto_fold_dirs": false,
         "bold_folder_labels": false,
+        "dock": "left",
         "folder_indicator": "icon",
         "git_status": false,
         "hide_gitignore": false,

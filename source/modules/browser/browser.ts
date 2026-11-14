@@ -1,3 +1,4 @@
+import fs from "fs/promises";
 import path from "path";
 import util from "util";
 import childProcess from "child_process";
@@ -10,41 +11,75 @@ export class Browser implements Package {
         context.logger.add(task);
         task.start();
 
-        const dependencies = ["google-chrome-stable"];
+        const dependencies = ["brave-browser"];
         const isInstalled = await context.dependencyManager.isInstalled(dependencies);
 
-        if (isInstalled) {
-            task.finish();
-            return;
+        const keyringFilePath = path.join("/", "usr", "share", "keyrings", "brave-browser-archive-keyring.gpg");
+        const sourceFilePath = path.join("/", "etc", "apt", "sources.list.d", "brave-browser-release.sources");
+        const sourceFilePaths = [keyringFilePath, sourceFilePath];
+        const sourceFilesExist = (
+            await Promise.all(
+                sourceFilePaths.map(async (filePath) => {
+                    const statistics = await fs.stat(filePath, { throwIfNoEntry: false });
+                    return statistics !== undefined && statistics.size > 0;
+                }),
+            )
+        ).every(Boolean);
+
+        if (!isInstalled || !sourceFilesExist) {
+            task.continue("Update package manager");
+            await context.dependencyManager.update(task);
+
+            const systemDependencies = ["curl", "unattended-upgrades"];
+            task.continue(`Installing dependencies: ${systemDependencies.join(", ")}`);
+            await context.dependencyManager.install(systemDependencies, task);
+
+            task.continue("Set up Brave sources");
+            const exec = util.promisify(childProcess.exec);
+
+            await exec(
+                `sudo curl -fsSLo ${keyringFilePath} https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg`,
+            );
+
+            await exec(
+                `sudo curl -fsSLo ${sourceFilePath} https://brave-browser-apt-release.s3.brave.com/brave-browser.sources`,
+            );
+
+            await exec(`sudo rm -f /etc/apt/sources.list.d/brave-browser-*.list`);
+
+            task.continue("Update package manager");
+            await context.dependencyManager.update(task);
+
+            if (!isInstalled) {
+                task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
+                await context.dependencyManager.install(dependencies, task);
+            }
         }
 
-        task.continue("Update package manager");
-        await context.dependencyManager.update(task);
+        await this.configureAutomaticUpdates(context, task);
 
-        const systemDependencies = ["gnupg"];
-        task.continue(`Installing dependencies: ${systemDependencies.join(", ")}`);
-        await context.dependencyManager.install(systemDependencies, task);
+        task.finish();
+    }
 
-        const keyringFilePath = path.join("/", "usr", "share", "keyrings", "google-chrome.gpg");
-        const sourceFilePath = path.join("/", "etc", "apt", "sources.list.d", "google-chrome.list");
+    private async configureAutomaticUpdates(context: InstallContext, task: Task): Promise<void> {
+        const dependencies = ["unattended-upgrades"];
+        const isInstalled = await context.dependencyManager.isInstalled(dependencies);
 
-        task.continue("Set up google chrome sources");
+        if (!isInstalled) {
+            task.continue("Update package manager");
+            await context.dependencyManager.update(task);
+
+            task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
+            await context.dependencyManager.install(dependencies, task);
+        }
+
+        const configurationFilePath = path.join("/", "etc", "apt", "apt.conf.d", "51unattended-upgrades-brave");
+
+        task.continue("Configure automatic updates");
         const exec = util.promisify(childProcess.exec);
 
         await exec(
-            `curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor --yes -o ${keyringFilePath}`,
+            `printf '%s\\n' 'Unattended-Upgrade::Allowed-Origins {' '    "Brave Software:stable";' '};' | sudo tee ${configurationFilePath} > /dev/null`,
         );
-
-        await exec(
-            `echo 'deb [arch=amd64 signed-by=${keyringFilePath}] http://dl.google.com/linux/chrome/deb/ stable main' | sudo tee ${sourceFilePath} > /dev/null`,
-        );
-
-        task.continue("Update package manager");
-        await context.dependencyManager.update(task);
-
-        task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
-        await context.dependencyManager.install(dependencies, task);
-
-        task.finish();
     }
 }

@@ -18,7 +18,7 @@ Vite+ defaults to pnpm, which can hold back freshly published releases. The setu
 Open a new terminal, then:
 
 - Log out and back in to use Docker without `sudo`.
-- Sign in to Zed, 1Password, and Chrome.
+- Sign in to Zed, 1Password, and Brave.
 - Run `gh auth login` to authenticate the GitHub CLI.
 - Pick a wallpaper in HydraPaper.
 - Put personal shell config in `~/.custom.bashrc`, not `~/.bashrc`.

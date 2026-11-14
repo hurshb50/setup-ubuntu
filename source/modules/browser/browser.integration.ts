@@ -18,13 +18,19 @@ suite("Browser", () => {
         await new Browser().install(context);
     });
 
-    test("makes google chrome available", async () => {
+    test("makes brave browser available", async () => {
         const exec = util.promisify(childProcess.exec);
-        const { stdout } = await exec("google-chrome --version");
-        expect(stdout).toMatch(/^Google Chrome \d+\.\d+\.\d+\.\d+/);
+        const { stdout } = await exec("brave-browser --version");
+        expect(stdout).toMatch(/^Brave Browser \d+\.\d+\.\d+/);
     });
 
-    test("skips the installation when google chrome is already installed", async () => {
+    test("configures unattended updates for brave", async () => {
+        const exec = util.promisify(childProcess.exec);
+        const { stdout } = await exec("apt-config dump Unattended-Upgrade::Allowed-Origins");
+        expect(stdout).toContain('"Brave Software:stable"');
+    });
+
+    test("skips the installation when brave browser is already installed", async () => {
         const update = vi.spyOn(context.dependencyManager, "update");
         const install = vi.spyOn(context.dependencyManager, "install");
 
