@@ -13,6 +13,18 @@ vpx @hurshb50/setup-ubuntu@latest
 
 Vite+ defaults to pnpm, which can hold back freshly published releases. The setup pins npm globally, so later commands need no prefix.
 
+## Choosing Components
+
+In an interactive terminal, choose which components to install. All components start selected.
+
+- Use arrow keys to navigate.
+- Press Space to toggle selection.
+- Press A to select or clear all.
+- Press Enter to continue.
+- Press Escape to cancel.
+
+Without an interactive terminal, all components install automatically.
+
 ## After Installation
 
 Open a new terminal, then:

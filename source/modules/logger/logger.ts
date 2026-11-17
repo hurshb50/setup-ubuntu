@@ -4,6 +4,26 @@ import escapes from "ansi-escapes";
 import { setTimeout } from "timers/promises";
 import { stdout } from "process";
 
+const defaultColumns = 150;
+
+export function renderBanner(title: string, columns = stdout.columns ?? defaultColumns): string[] {
+    const width = Math.max(4, columns - 2);
+    const text = ` ${title} `;
+    const remaining = Math.max(0, width - text.length);
+    const leftPadding = Math.floor(remaining / 2);
+    const rightPadding = remaining - leftPadding;
+    const leftText = " ".repeat(leftPadding) + text + " ".repeat(rightPadding);
+    const top = `╭${"─".repeat(width)}╮`;
+    const middle = `${styles.blue.open}│${styles.bold.open}${styles.white.open}${leftText}${styles.white.close}${styles.bold.close}${styles.blue.open}│${styles.blue.close}`;
+    const bottom = `╰${"─".repeat(width)}╯`;
+
+    return [
+        `${styles.blue.open}${top}${styles.blue.close}`,
+        middle,
+        `${styles.blue.open}${bottom}${styles.blue.close}`,
+    ];
+}
+
 export class Logger {
     status: "idle" | "in-progress" | "done";
     private tasks: Task[];
@@ -13,7 +33,6 @@ export class Logger {
     private onSignal: (signal: NodeJS.Signals) => void;
     private static check = "✔";
     private static dots = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
-    private static defaultColumns = 150;
 
     constructor() {
         this.status = "idle";
@@ -86,7 +105,7 @@ export class Logger {
     private write(): void {
         if (this.status === "idle") throw new Error("Cannot write to stdout if status is 'idle'.");
 
-        const columns = stdout.columns ?? Logger.defaultColumns;
+        const columns = stdout.columns ?? defaultColumns;
 
         for (const [taskIndex, task] of this.tasks.entries()) {
             const width = columns - 1;
@@ -167,28 +186,15 @@ export class Logger {
     }
 
     private banner(title: string): void {
-        const columns = stdout.columns ?? Logger.defaultColumns;
-        const width = Math.max(4, columns - 2);
-        const text = ` ${title} `;
-        const remaining = Math.max(0, width - text.length);
-        const leftPadding = Math.floor(remaining / 2);
-        const rightPadding = remaining - leftPadding;
-        const leftText = " ".repeat(leftPadding) + text + " ".repeat(rightPadding);
-        const top = `╭${"─".repeat(width)}╮`;
-        const middle = `│${styles.bold.open}${styles.white.open}${leftText}${styles.white.close}${styles.bold.close}${styles.blue.open}│`;
-        const bottom = `╰${"─".repeat(width)}╯`;
+        const lines = renderBanner(title);
 
-        this.log(styles.blue.open);
-        this.log(escapes.cursorLeft);
-        this.log(escapes.eraseLine);
-        this.log(top);
-        this.newline();
-        this.log(escapes.cursorLeft);
-        this.log(middle);
-        this.newline();
-        this.log(escapes.cursorLeft);
-        this.log(bottom);
-        this.log(styles.blue.close);
+        lines.forEach((line, index) => {
+            this.log(escapes.cursorLeft);
+            this.log(escapes.eraseLine);
+            this.log(line);
+            if (index < lines.length - 1) this.newline();
+        });
+
         this.newline();
     }
 }
