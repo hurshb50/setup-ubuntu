@@ -57,6 +57,10 @@ suite("Smart Change Directory", () => {
         expect(await new SmartChangeDirectory().isInstalled(context)).toBe(true);
     });
 
+    test("installs the manual pages", async () => {
+        expect(await pathExists(path.join(os.homedir(), ".local", "share", "man", "man1", "zoxide.1"))).toBe(true);
+    });
+
     suite("uninstall", () => {
         const userDataPath = path.join(os.homedir(), ".local", "share", "zoxide");
         const manualDirectoryPath = path.join(os.homedir(), ".local", "share", "man", "man1");

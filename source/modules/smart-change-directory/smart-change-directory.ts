@@ -1,9 +1,30 @@
 import fs from "fs/promises";
+import os from "os";
 import path from "path";
 import util from "util";
 import childProcess from "child_process";
 import type { InstallContext, Package } from "../package/package";
 import { Task } from "../task/task";
+
+const latestReleaseUrl = "https://github.com/ajeetdsouza/zoxide/releases/latest";
+
+// Mirrors the targets chosen by the upstream install.sh.
+const targets: Partial<Record<string, string>> = {
+    x64: "x86_64-unknown-linux-musl",
+    arm64: "aarch64-unknown-linux-musl",
+};
+
+// The upstream install.sh queries the GitHub API, which rate limits shared IPs such as CI runners.
+// Following the release redirect and downloading the asset directly avoids the API.
+export function zoxideDownloadUrl(releaseUrl: string, architecture: string): string {
+    const version = releaseUrl.trim().match(/\/tag\/v([^/]+)$/)?.[1];
+    if (version === undefined) throw new Error(`Cannot find the zoxide version in '${releaseUrl}'.`);
+
+    const target = targets[architecture];
+    if (target === undefined) throw new Error(`zoxide is not available for architecture '${architecture}'.`);
+
+    return `https://github.com/ajeetdsouza/zoxide/releases/download/v${version}/zoxide-${version}-${target}.tar.gz`;
+}
 
 export class SmartChangeDirectory implements Package {
     async isInstalled(context: InstallContext): Promise<boolean> {
@@ -18,6 +39,7 @@ export class SmartChangeDirectory implements Package {
         task.start();
 
         const binaryDirectoryPath = path.join(context.directories.home, ".local", "bin");
+        const manualDirectoryPath = path.join(context.directories.home, ".local", "share", "man", "man1");
         const isInstalled = await this.isInstalled(context);
 
         if (isInstalled) {
@@ -25,11 +47,28 @@ export class SmartChangeDirectory implements Package {
             return;
         }
 
-        task.continue("Install zoxide");
+        task.continue("Find latest zoxide release");
         const exec = util.promisify(childProcess.exec);
-        await exec(
-            `curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh -s -- --bin-dir ${binaryDirectoryPath}`,
-        );
+        const { stdout: releaseUrl } = await exec(`curl -sSfLI -o /dev/null -w '%{url_effective}' ${latestReleaseUrl}`);
+        const downloadUrl = zoxideDownloadUrl(releaseUrl, os.arch());
+        const temporaryDirectoryPath = await fs.mkdtemp(path.join(os.tmpdir(), "zoxide-"));
+
+        try {
+            task.continue("Download zoxide");
+            await exec(`curl -sSfL ${downloadUrl} | tar xzf - -C ${temporaryDirectoryPath}`);
+
+            task.continue("Install zoxide");
+            const binaryFilePath = path.join(binaryDirectoryPath, "zoxide");
+            await fs.mkdir(binaryDirectoryPath, { recursive: true });
+            await fs.copyFile(path.join(temporaryDirectoryPath, "zoxide"), binaryFilePath);
+            await fs.chmod(binaryFilePath, 0o755);
+
+            task.continue("Install manual pages");
+            await fs.mkdir(manualDirectoryPath, { recursive: true });
+            await fs.cp(path.join(temporaryDirectoryPath, "man", "man1"), manualDirectoryPath, { recursive: true });
+        } finally {
+            await fs.rm(temporaryDirectoryPath, { recursive: true, force: true });
+        }
 
         task.finish();
     }
