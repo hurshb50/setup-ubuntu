@@ -5,7 +5,16 @@ import childProcess from "child_process";
 import type { InstallContext, Package } from "../package/package";
 import { Task } from "../task/task";
 
+const keyringFilePath = path.join("/", "usr", "share", "keyrings", "1password-archive-keyring.gpg");
+const sourceFilePath = path.join("/", "etc", "apt", "sources.list.d", "1password.list");
+const policyDirectoryPath = path.join("/", "etc", "debsig", "policies", "AC2D62742012EA22");
+const debsigKeyringDirectoryPath = path.join("/", "usr", "share", "debsig", "keyrings", "AC2D62742012EA22");
+
 export class PasswordManager implements Package {
+    async isInstalled(context: InstallContext): Promise<boolean> {
+        return context.dependencyManager.isInstalled(["1password"]);
+    }
+
     async install(context: InstallContext): Promise<void> {
         const task = new Task("Password Manager");
         context.logger.add(task);
@@ -27,11 +36,7 @@ export class PasswordManager implements Package {
         task.continue(`Installing dependencies: ${systemDependencies.join(", ")}`);
         await context.dependencyManager.install(systemDependencies, task);
 
-        const keyringFilePath = path.join("/", "usr", "share", "keyrings", "1password-archive-keyring.gpg");
-        const sourceFilePath = path.join("/", "etc", "apt", "sources.list.d", "1password.list");
-        const policyDirectoryPath = path.join("/", "etc", "debsig", "policies", "AC2D62742012EA22");
         const policyFilePath = path.join(policyDirectoryPath, "1password.pol");
-        const debsigKeyringDirectoryPath = path.join("/", "usr", "share", "debsig", "keyrings", "AC2D62742012EA22");
         const debsigKeyringFilePath = path.join(debsigKeyringDirectoryPath, "debsig.gpg");
 
         task.continue("Set up 1password sources");
@@ -62,6 +67,32 @@ export class PasswordManager implements Package {
 
         task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
         await context.dependencyManager.install(dependencies, task);
+
+        task.finish();
+    }
+
+    async uninstall(context: InstallContext): Promise<void> {
+        const task = new Task("Remove Password Manager");
+        context.logger.add(task);
+        task.start();
+
+        // The ALSA library is shared with other applications, so only 1password is purged.
+        task.continue("Remove 1password");
+        await context.dependencyManager.purge(["1password"], task);
+
+        task.continue("Remove 1password sources");
+        const exec = util.promisify(childProcess.exec);
+        await exec(
+            `sudo rm -rf ${keyringFilePath} ${sourceFilePath} ${policyDirectoryPath} ${debsigKeyringDirectoryPath}`,
+        );
+
+        task.continue("Remove user data");
+        const userDataPaths = [
+            path.join(context.directories.home, ".config", "1Password"),
+            path.join(context.directories.home, ".cache", "1Password"),
+        ];
+
+        await Promise.all(userDataPaths.map((userDataPath) => fs.rm(userDataPath, { recursive: true, force: true })));
 
         task.finish();
     }

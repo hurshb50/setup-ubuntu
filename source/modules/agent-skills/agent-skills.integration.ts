@@ -49,4 +49,8 @@ suite("Agent Skills", () => {
             expect(await fs.readFile(destinationSkillPath, "utf8")).toBe(await fs.readFile(sourceSkillPath, "utf8"));
         }
     });
+
+    test("reports the agent skills as installed", async () => {
+        expect(await new AgentSkills().isInstalled(context)).toBe(true);
+    });
 });

@@ -24,4 +24,8 @@ suite("Agent Rules", () => {
 
         expect(await fs.readFile(destinationFilePath, "utf8")).toBe(await fs.readFile(sourceFilePath, "utf8"));
     });
+
+    test("reports the agent rules as installed", async () => {
+        expect(await new AgentRules().isInstalled(context)).toBe(true);
+    });
 });

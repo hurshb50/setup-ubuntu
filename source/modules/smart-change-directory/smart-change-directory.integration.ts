@@ -1,3 +1,4 @@
+import fs from "fs/promises";
 import os from "os";
 import path from "path";
 import util from "util";
@@ -5,6 +6,7 @@ import childProcess from "child_process";
 import { beforeAll, expect, suite, test, vi } from "vite-plus/test";
 import { DependencyManager } from "../dependency-manager/dependency-manager";
 import { Logger } from "../logger/logger";
+import { pathExists } from "../test/integration/file-system";
 import { assetsDirectoryPath, projectDirectoryPath } from "../test/integration/paths";
 import { SmartChangeDirectory } from "./smart-change-directory";
 
@@ -49,5 +51,32 @@ suite("Smart Change Directory", () => {
             install.mockRestore();
             exec.mockRestore();
         }
+    });
+
+    test("reports zoxide as installed", async () => {
+        expect(await new SmartChangeDirectory().isInstalled(context)).toBe(true);
+    });
+
+    suite("uninstall", () => {
+        const userDataPath = path.join(os.homedir(), ".local", "share", "zoxide");
+        const manualDirectoryPath = path.join(os.homedir(), ".local", "share", "man", "man1");
+
+        beforeAll(async () => {
+            await fs.mkdir(userDataPath, { recursive: true });
+            await new SmartChangeDirectory().uninstall(context);
+        });
+
+        test("removes zoxide", async () => {
+            expect(await new SmartChangeDirectory().isInstalled(context)).toBe(false);
+        });
+
+        test("removes the manual pages", async () => {
+            const fileNames = await fs.readdir(manualDirectoryPath).catch(() => []);
+            expect(fileNames.filter((fileName) => fileName.startsWith("zoxide"))).toEqual([]);
+        });
+
+        test("removes the user data", async () => {
+            expect(await pathExists(userDataPath)).toBe(false);
+        });
     });
 });

@@ -37,4 +37,18 @@ suite("Fuzzy Finder", () => {
             install.mockRestore();
         }
     });
+
+    test("reports fzf as installed", async () => {
+        expect(await new FuzzyFinder().isInstalled(context)).toBe(true);
+    });
+
+    suite("uninstall", () => {
+        beforeAll(async () => {
+            await new FuzzyFinder().uninstall(context);
+        });
+
+        test("removes fzf", async () => {
+            expect(await new FuzzyFinder().isInstalled(context)).toBe(false);
+        });
+    });
 });

@@ -111,4 +111,8 @@ suite("Version Control System", () => {
             install.mockRestore();
         }
     });
+
+    test("reports the dependencies as installed", async () => {
+        expect(await new VersionControlSystem().isInstalled(context)).toBe(true);
+    });
 });

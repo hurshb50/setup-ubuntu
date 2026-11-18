@@ -18,13 +18,6 @@ function is_posix() {
     shopt -oq posix
 }
 
-function print_error() {
-    local RED='\033[0;31m'
-    local NC='\033[0m'
-    echo -e "\n${RED} $1 ${NC}"
-    echo -e "\n${RED} Run the setup script to fix this.${NC}"
-}
-
 function path() {
     export PATH="$HOME/.local/bin:$PATH"
 }
@@ -48,8 +41,7 @@ function completion() {
 
 function terminal_view() {
     if ! check_command "oh-my-posh"; then
-        print_error "'oh-my-posh' is not installed"
-        return 1
+        return
     fi
 
     eval "$(oh-my-posh init bash --config $HOME/.config/oh-my-posh/oh-my-posh.toml)"
@@ -57,8 +49,7 @@ function terminal_view() {
 
 function smart_change_directory() {
     if ! check_command "zoxide"; then
-        print_error "'zoxide' is not installed"
-        return 1
+        return
     fi
 
     eval "$(zoxide init bash --cmd cd)"
@@ -90,8 +81,7 @@ function load_auto_suggestion() {
     BLE_PATH="$HOME/.local/share/blesh/ble.sh"
 
     if ! path_exists "$BLE_PATH"; then
-        print_error "'ble.sh' is not installed"
-        return 1
+        return
     fi
 
     source "$BLE_PATH" --attach=none
@@ -99,8 +89,7 @@ function load_auto_suggestion() {
 
 function start_auto_suggestion() {
     if ! check_command "ble-attach"; then
-        print_error "ble-attach is not installed"
-        return 1
+        return
     fi
 
     ble-attach
@@ -109,8 +98,7 @@ function start_auto_suggestion() {
 
 function fuzzy_finder() {
     if ! check_command "fzf"; then
-        print_error "'fzf' is not installed"
-        return 1
+        return
     fi
 
     FZF_KEY_BINDINGS="/usr/share/doc/fzf/examples/key-bindings.bash"

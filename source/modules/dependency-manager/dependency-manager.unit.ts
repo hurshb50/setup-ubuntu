@@ -181,4 +181,51 @@ describe("DependencyManager", () => {
             expect(childProcessMocks.spawn).not.toHaveBeenCalled();
         });
     });
+
+    describe("purge", () => {
+        test("skips apt-get when no dependency is installed", async () => {
+            respondToPackageQueries({ zoxide: new Error("dpkg-query: no packages found matching zoxide") });
+
+            const task = new Task("Remove zoxide (apt)");
+            task.start();
+
+            await new DependencyManager().purge(["zoxide"], task);
+
+            expect(childProcessMocks.spawn).not.toHaveBeenCalled();
+        });
+
+        test("purges only the installed dependencies", async () => {
+            respondToPackageQueries({
+                "brave-browser": "install ok installed",
+                "brave-keyring": new Error("dpkg-query: no packages found matching brave-keyring"),
+            });
+
+            childProcessMocks.spawn.mockReturnValue({
+                stdout: { on: vi.fn() },
+                stderr: { on: vi.fn() },
+                once: (event: string, callback: (code: number) => void) => {
+                    if (event === "close") callback(0);
+                },
+            });
+
+            const task = new Task("Remove Browser");
+            task.start();
+
+            await new DependencyManager().purge(["brave-browser", "brave-keyring"], task);
+
+            expect(childProcessMocks.spawn).toHaveBeenCalledWith(
+                "sudo",
+                [
+                    "env",
+                    "DEBIAN_FRONTEND=noninteractive",
+                    "NEEDRESTART_SUSPEND=1",
+                    "apt-get",
+                    "purge",
+                    "-y",
+                    "brave-browser",
+                ],
+                expect.anything(),
+            );
+        });
+    });
 });

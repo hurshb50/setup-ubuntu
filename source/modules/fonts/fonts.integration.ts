@@ -73,4 +73,8 @@ suite("Fonts", () => {
             install.mockRestore();
         }
     });
+
+    test("reports the fonts as installed", async () => {
+        expect(await new Fonts().isInstalled(context)).toBe(true);
+    });
 });

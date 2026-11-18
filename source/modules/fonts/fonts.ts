@@ -4,6 +4,20 @@ import type { InstallContext, Package } from "../package/package";
 import { Task } from "../task/task";
 
 export class Fonts implements Package {
+    async isInstalled(context: InstallContext): Promise<boolean> {
+        const sourceDirectoryPath = path.join(context.directories.assets, "fonts");
+        const destinationDirectoryPath = path.join(context.directories.home, ".local", "share", "fonts");
+        const fileNames = await fs.readdir(sourceDirectoryPath);
+
+        const statistics = await Promise.all(
+            fileNames.map((fileName) =>
+                fs.stat(path.join(destinationDirectoryPath, fileName), { throwIfNoEntry: false }),
+            ),
+        );
+
+        return statistics.every((statistic) => statistic !== undefined);
+    }
+
     async install(context: InstallContext): Promise<void> {
         const task = new Task("Fonts");
         context.logger.add(task);

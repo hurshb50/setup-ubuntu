@@ -3,14 +3,19 @@ import path from "path";
 import type { InstallContext, Package } from "../package/package";
 import { Task } from "../task/task";
 
+const dependencies = ["git", "git-lfs", "build-essential"];
+
 export class VersionControlSystem implements Package {
+    async isInstalled(context: InstallContext): Promise<boolean> {
+        return context.dependencyManager.isInstalled(dependencies);
+    }
+
     async install(context: InstallContext): Promise<void> {
         const task = new Task("Version Control System");
         context.logger.add(task);
         task.start();
 
-        const dependencies = ["git", "git-lfs", "build-essential"];
-        const isInstalled = await context.dependencyManager.isInstalled(dependencies);
+        const isInstalled = await this.isInstalled(context);
 
         if (!isInstalled) {
             task.continue("Update package manager");

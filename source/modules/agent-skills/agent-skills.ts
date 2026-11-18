@@ -4,6 +4,12 @@ import type { InstallContext, Package } from "../package/package";
 import { Task } from "../task/task";
 
 export class AgentSkills implements Package {
+    async isInstalled(context: InstallContext): Promise<boolean> {
+        const directoryPath = path.join(context.directories.home, ".agents", "skills");
+        const statistics = await fs.stat(directoryPath, { throwIfNoEntry: false });
+        return statistics !== undefined;
+    }
+
     async install(context: InstallContext): Promise<void> {
         const task = new Task("Agent Skills");
         context.logger.add(task);

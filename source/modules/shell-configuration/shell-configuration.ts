@@ -4,6 +4,14 @@ import type { InstallContext, Package } from "../package/package";
 import { Task } from "../task/task";
 
 export class ShellConfiguration implements Package {
+    async isInstalled(context: InstallContext): Promise<boolean> {
+        const sourceFilePath = path.join(context.directories.assets, ".bashrc");
+        const destinationFilePath = path.join(context.directories.home, ".bashrc");
+        const destination = await fs.readFile(destinationFilePath, "utf8").catch(() => undefined);
+
+        return destination === (await fs.readFile(sourceFilePath, "utf8"));
+    }
+
     async install(context: InstallContext): Promise<void> {
         const task = new Task("Shell Configuration");
         context.logger.add(task);

@@ -62,6 +62,20 @@ export class DependencyManager {
         await operation;
     }
 
+    async purge(dependencies: string[], task: Task): Promise<void> {
+        const installedDependencies: string[] = [];
+
+        // apt-get fails on packages it cannot locate, so only purge installed ones.
+        for (const dependency of dependencies) {
+            if (await this.isInstalled([dependency])) installedDependencies.push(dependency);
+        }
+
+        if (installedDependencies.length === 0) return;
+
+        const operation = this.enqueue(["purge", "-y", ...installedDependencies], task);
+        await operation;
+    }
+
     async update(task: Task): Promise<void> {
         const operation = this.enqueue(["update"], task);
         await operation;

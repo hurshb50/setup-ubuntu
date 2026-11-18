@@ -7,17 +7,21 @@ import type { InstallContext, Package } from "../package/package";
 import { Task } from "../task/task";
 
 export class AutoSuggestion implements Package {
+    async isInstalled(context: InstallContext): Promise<boolean> {
+        const installedFilePath = path.join(context.directories.home, ".local", "share", "blesh", "ble.sh");
+        const statistics = await fs.stat(installedFilePath, { throwIfNoEntry: false });
+        return statistics !== undefined;
+    }
+
     async install(context: InstallContext): Promise<void> {
         const task = new Task("Auto Suggestion");
         context.logger.add(task);
         task.start();
 
         const destinationDirectoryPath = path.join(context.directories.home, ".local", "share");
-        const installedFilePath = path.join(destinationDirectoryPath, "blesh", "ble.sh");
         const sourceFilePath = path.join(context.directories.assets, ".blerc");
         const destinationFilePath = path.join(context.directories.home, ".blerc");
-        const statistics = await fs.stat(installedFilePath, { throwIfNoEntry: false });
-        const isInstalled = statistics !== undefined;
+        const isInstalled = await this.isInstalled(context);
 
         if (!isInstalled) {
             task.continue("Update package manager");
@@ -46,6 +50,26 @@ export class AutoSuggestion implements Package {
 
         task.continue("Copy configuration");
         await fs.copyFile(sourceFilePath, destinationFilePath);
+
+        task.finish();
+    }
+
+    async uninstall(context: InstallContext): Promise<void> {
+        const task = new Task("Remove Auto Suggestion");
+        context.logger.add(task);
+        task.start();
+
+        const home = context.directories.home;
+
+        task.continue("Remove ble.sh");
+        const filePaths = [
+            path.join(home, ".local", "share", "blesh"),
+            path.join(home, ".cache", "blesh"),
+            path.join(home, ".local", "state", "blesh"),
+            path.join(home, ".blerc"),
+        ];
+
+        await Promise.all(filePaths.map((filePath) => fs.rm(filePath, { recursive: true, force: true })));
 
         task.finish();
     }

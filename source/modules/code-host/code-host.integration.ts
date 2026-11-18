@@ -1,9 +1,12 @@
+import fs from "fs/promises";
 import os from "os";
+import path from "path";
 import util from "util";
 import childProcess from "child_process";
 import { beforeAll, expect, suite, test, vi } from "vite-plus/test";
 import { DependencyManager } from "../dependency-manager/dependency-manager";
 import { Logger } from "../logger/logger";
+import { pathExists } from "../test/integration/file-system";
 import { assetsDirectoryPath, projectDirectoryPath } from "../test/integration/paths";
 import { CodeHost } from "./code-host";
 
@@ -36,5 +39,31 @@ suite("Code Host", () => {
             update.mockRestore();
             install.mockRestore();
         }
+    });
+
+    test("reports the github cli as installed", async () => {
+        expect(await new CodeHost().isInstalled(context)).toBe(true);
+    });
+
+    suite("uninstall", () => {
+        const userDataPath = path.join(os.homedir(), ".config", "gh");
+
+        beforeAll(async () => {
+            await fs.mkdir(userDataPath, { recursive: true });
+            await new CodeHost().uninstall(context);
+        });
+
+        test("removes the github cli", async () => {
+            expect(await new CodeHost().isInstalled(context)).toBe(false);
+        });
+
+        test("removes the github cli sources", async () => {
+            expect(await pathExists("/usr/share/keyrings/github-cli.gpg")).toBe(false);
+            expect(await pathExists("/etc/apt/sources.list.d/github-cli.list")).toBe(false);
+        });
+
+        test("removes the user data", async () => {
+            expect(await pathExists(userDataPath)).toBe(false);
+        });
     });
 });

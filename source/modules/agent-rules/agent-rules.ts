@@ -4,6 +4,12 @@ import type { InstallContext, Package } from "../package/package";
 import { Task } from "../task/task";
 
 export class AgentRules implements Package {
+    async isInstalled(context: InstallContext): Promise<boolean> {
+        const filePath = path.join(context.directories.home, ".config", "zed", "AGENTS.md");
+        const statistics = await fs.stat(filePath, { throwIfNoEntry: false });
+        return statistics !== undefined;
+    }
+
     async install(context: InstallContext): Promise<void> {
         const task = new Task("Agent Rules");
         context.logger.add(task);

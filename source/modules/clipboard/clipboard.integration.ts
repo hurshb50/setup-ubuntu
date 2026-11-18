@@ -43,4 +43,8 @@ suite("Clipboard", () => {
             install.mockRestore();
         }
     });
+
+    test("reports the clipboard tools as installed", async () => {
+        expect(await new Clipboard().isInstalled(context)).toBe(true);
+    });
 });

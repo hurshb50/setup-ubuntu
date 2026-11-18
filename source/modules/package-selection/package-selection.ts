@@ -2,34 +2,79 @@ import escapes from "ansi-escapes";
 import styles from "ansi-styles";
 import { stdin, stdout } from "process";
 import readline from "readline";
-import type { Package } from "../package/package";
+import { isRemovable, type InstallContext, type Package, type RemovablePackage } from "../package/package";
 import { renderBanner } from "../logger/logger";
+
+export type Action = "install" | "uninstall" | "skip";
 
 export interface PackageOption {
     label: string;
     implementation: Package;
 }
 
+export interface PackageSelection {
+    install: Package[];
+    uninstall: RemovablePackage[];
+}
+
 export async function selectPackages(
     options: PackageOption[],
+    context: InstallContext,
     interactive = stdin.isTTY === true && stdout.isTTY === true,
-): Promise<Package[] | undefined> {
-    if (options.length === 0) return [];
-    if (!interactive) return options.map(({ implementation }) => implementation);
+): Promise<PackageSelection | undefined> {
+    const defaultActions = options.map((): Action => "install");
+    if (!interactive || options.length === 0) return getSelection(options, defaultActions);
 
-    return promptForPackages(options);
+    const installed = await Promise.all(options.map(({ implementation }) => implementation.isInstalled(context)));
+    return promptForPackages(options, installed);
 }
 
-export function getSelectedPackages(options: PackageOption[], selectedIndexes: ReadonlySet<number>): Package[] {
-    return options.filter((_, index) => selectedIndexes.has(index)).map(({ implementation }) => implementation);
+export function getAvailableActions(implementation: Package, installed: boolean): Action[] {
+    return installed && isRemovable(implementation) ? ["install", "uninstall", "skip"] : ["install", "skip"];
 }
 
-function promptForPackages(options: PackageOption[]): Promise<Package[] | undefined> {
+export function getNextAction(action: Action, availableActions: readonly Action[]): Action {
+    const index = availableActions.indexOf(action);
+    return availableActions[(index + 1) % availableActions.length] ?? "install";
+}
+
+export function toggleAllActions(actions: readonly Action[]): Action[] {
+    const action: Action = actions.every((current) => current === "install") ? "skip" : "install";
+    return actions.map(() => action);
+}
+
+export function getSelection(options: PackageOption[], actions: readonly Action[]): PackageSelection {
+    const selection: PackageSelection = { install: [], uninstall: [] };
+
+    options.forEach(({ implementation }, index) => {
+        const action = actions[index];
+
+        if (action === "install") selection.install.push(implementation);
+        else if (action === "uninstall" && isRemovable(implementation)) selection.uninstall.push(implementation);
+    });
+
+    return selection;
+}
+
+const marks: Record<Action, string> = {
+    install: `${styles.green.open}[+]${styles.green.close}`,
+    uninstall: `${styles.red.open}[-]${styles.red.close}`,
+    skip: `${styles.dim.open}[ ]${styles.dim.close}`,
+};
+
+function promptForPackages(
+    options: PackageOption[],
+    installed: readonly boolean[],
+): Promise<PackageSelection | undefined> {
     return new Promise((resolve) => {
         let activeIndex = 0;
         let renderedLineCount = 0;
         let finished = false;
-        const selectedIndexes = new Set(options.map((_, index) => index));
+        let actions = options.map((): Action => "install");
+        const availableActions = options.map(({ implementation }, index) =>
+            getAvailableActions(implementation, installed[index] === true),
+        );
+        const labelWidth = Math.max(...options.map(({ label }) => label.length));
         const previousRawMode = stdin.isRaw;
 
         const draw = (): void => {
@@ -38,22 +83,27 @@ function promptForPackages(options: PackageOption[]): Promise<Package[] | undefi
 
             const legend = [
                 keyHint("↑/↓", "Move"),
-                keyHint("Space", "Toggle"),
+                keyHint("Space", "Change"),
                 keyHint("A", "Toggle all"),
-                keyHint("Enter", "Install"),
+                keyHint("Enter", "Run"),
+            ].join("   ");
+            const markLegend = [
+                `${marks.install} Install`,
+                `${marks.uninstall} Remove, including data`,
+                `${marks.skip} Skip`,
             ].join("   ");
             const lines = [
                 ...renderBanner("Ubuntu Setup"),
-                `${styles.dim.open}All components are selected by default.${styles.dim.close}`,
+                `${styles.dim.open}${markLegend}${styles.dim.close}`,
                 legend,
                 ...options.map(({ label }, index) => {
                     const pointer = index === activeIndex ? `${styles.blue.open}❯${styles.blue.close}` : " ";
-                    const checkbox = selectedIndexes.has(index)
-                        ? `${styles.green.open}[✓]${styles.green.close}`
-                        : `${styles.dim.open}[ ]${styles.dim.close}`;
+                    const mark = marks[actions[index] ?? "install"];
+                    const paddedLabel = label.padEnd(labelWidth);
                     const optionLabel =
-                        index === activeIndex ? `${styles.bold.open}${label}${styles.bold.close}` : label;
-                    return `${pointer} ${checkbox} ${optionLabel}`;
+                        index === activeIndex ? `${styles.bold.open}${paddedLabel}${styles.bold.close}` : paddedLabel;
+                    const status = installed[index] ? `   ${styles.dim.open}installed${styles.dim.close}` : "";
+                    return `${pointer} ${mark} ${optionLabel}${status}`;
                 }),
             ];
 
@@ -75,14 +125,14 @@ function promptForPackages(options: PackageOption[]): Promise<Package[] | undefi
             stdin.pause();
         };
 
-        const finish = (packages: Package[] | undefined, message?: string): void => {
+        const finish = (selection: PackageSelection | undefined, message?: string): void => {
             if (finished) return;
 
             finished = true;
             cleanup();
             stdout.write(`${escapes.cursorUp(renderedLineCount)}\r${escapes.eraseDown}`);
             if (message) stdout.write(`\n${message}\n`);
-            resolve(packages);
+            resolve(selection);
         };
 
         const onKeypress = (character: string, key: { name?: string; ctrl?: boolean }): void => {
@@ -112,21 +162,21 @@ function promptForPackages(options: PackageOption[]): Promise<Package[] | undefi
             }
 
             if (key.name === "space" || character === " ") {
-                if (selectedIndexes.has(activeIndex)) selectedIndexes.delete(activeIndex);
-                else selectedIndexes.add(activeIndex);
+                actions = actions.map((action, index) =>
+                    index === activeIndex ? getNextAction(action, availableActions[index] ?? []) : action,
+                );
                 draw();
                 return;
             }
 
             if (normalizedCharacter === "a") {
-                if (selectedIndexes.size === options.length) selectedIndexes.clear();
-                else options.forEach((_, index) => selectedIndexes.add(index));
+                actions = toggleAllActions(actions);
                 draw();
                 return;
             }
 
             if (key.name === "return") {
-                finish(getSelectedPackages(options, selectedIndexes));
+                finish(getSelection(options, actions));
             }
         };
 

@@ -4,6 +4,7 @@ import path from "path";
 import { beforeAll, expect, suite, test, vi } from "vite-plus/test";
 import { DependencyManager } from "../dependency-manager/dependency-manager";
 import { Logger } from "../logger/logger";
+import { pathExists } from "../test/integration/file-system";
 import { assetsDirectoryPath, projectDirectoryPath } from "../test/integration/paths";
 import { AutoSuggestion } from "./auto-suggestion";
 
@@ -44,5 +45,28 @@ suite("Auto Suggestion", () => {
             update.mockRestore();
             install.mockRestore();
         }
+    });
+
+    test("reports ble.sh as installed", async () => {
+        expect(await new AutoSuggestion().isInstalled(context)).toBe(true);
+    });
+
+    suite("uninstall", () => {
+        const cachePath = path.join(os.homedir(), ".cache", "blesh");
+
+        beforeAll(async () => {
+            await fs.mkdir(cachePath, { recursive: true });
+            await new AutoSuggestion().uninstall(context);
+        });
+
+        test("removes ble.sh", async () => {
+            expect(await new AutoSuggestion().isInstalled(context)).toBe(false);
+            expect(await pathExists(path.join(os.homedir(), ".local", "share", "blesh"))).toBe(false);
+        });
+
+        test("removes the configuration and cache", async () => {
+            expect(await pathExists(path.join(os.homedir(), ".blerc"))).toBe(false);
+            expect(await pathExists(cachePath)).toBe(false);
+        });
     });
 });

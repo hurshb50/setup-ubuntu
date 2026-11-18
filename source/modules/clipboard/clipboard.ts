@@ -1,14 +1,19 @@
 import type { InstallContext, Package } from "../package/package";
 import { Task } from "../task/task";
 
+const dependencies = ["wl-clipboard", "xclip"];
+
 export class Clipboard implements Package {
+    async isInstalled(context: InstallContext): Promise<boolean> {
+        return context.dependencyManager.isInstalled(dependencies);
+    }
+
     async install(context: InstallContext): Promise<void> {
         const task = new Task("Clipboard");
         context.logger.add(task);
         task.start();
 
-        const dependencies = ["wl-clipboard", "xclip"];
-        const isInstalled = await context.dependencyManager.isInstalled(dependencies);
+        const isInstalled = await this.isInstalled(context);
 
         if (isInstalled) {
             task.finish();

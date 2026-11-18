@@ -6,6 +6,7 @@ import childProcess from "child_process";
 import { beforeAll, expect, suite, test, vi } from "vite-plus/test";
 import { DependencyManager } from "../dependency-manager/dependency-manager";
 import { Logger } from "../logger/logger";
+import { pathExists } from "../test/integration/file-system";
 import { assetsDirectoryPath, projectDirectoryPath } from "../test/integration/paths";
 import { TerminalView } from "./terminal-view";
 
@@ -46,5 +47,24 @@ suite("Terminal View", () => {
             update.mockRestore();
             install.mockRestore();
         }
+    });
+
+    test("reports oh-my-posh as installed", async () => {
+        expect(await new TerminalView().isInstalled(context)).toBe(true);
+    });
+
+    suite("uninstall", () => {
+        beforeAll(async () => {
+            await new TerminalView().uninstall(context);
+        });
+
+        test("removes oh-my-posh", async () => {
+            expect(await new TerminalView().isInstalled(context)).toBe(false);
+        });
+
+        test("removes the configuration and themes cache", async () => {
+            expect(await pathExists(path.join(os.homedir(), ".config", "oh-my-posh"))).toBe(false);
+            expect(await pathExists(path.join(os.homedir(), ".cache", "oh-my-posh"))).toBe(false);
+        });
     });
 });

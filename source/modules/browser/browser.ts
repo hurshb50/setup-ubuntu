@@ -5,17 +5,23 @@ import childProcess from "child_process";
 import type { InstallContext, Package } from "../package/package";
 import { Task } from "../task/task";
 
+const keyringFilePath = path.join("/", "usr", "share", "keyrings", "brave-browser-archive-keyring.gpg");
+const sourceFilePath = path.join("/", "etc", "apt", "sources.list.d", "brave-browser-release.sources");
+const configurationFilePath = path.join("/", "etc", "apt", "apt.conf.d", "51unattended-upgrades-brave");
+
 export class Browser implements Package {
+    async isInstalled(context: InstallContext): Promise<boolean> {
+        return context.dependencyManager.isInstalled(["brave-browser"]);
+    }
+
     async install(context: InstallContext): Promise<void> {
         const task = new Task("Browser");
         context.logger.add(task);
         task.start();
 
         const dependencies = ["brave-browser"];
-        const isInstalled = await context.dependencyManager.isInstalled(dependencies);
+        const isInstalled = await this.isInstalled(context);
 
-        const keyringFilePath = path.join("/", "usr", "share", "keyrings", "brave-browser-archive-keyring.gpg");
-        const sourceFilePath = path.join("/", "etc", "apt", "sources.list.d", "brave-browser-release.sources");
         const sourceFilePaths = [keyringFilePath, sourceFilePath];
         const sourceFilesExist = (
             await Promise.all(
@@ -61,6 +67,32 @@ export class Browser implements Package {
         task.finish();
     }
 
+    async uninstall(context: InstallContext): Promise<void> {
+        const task = new Task("Remove Browser");
+        context.logger.add(task);
+        task.start();
+
+        task.continue("Remove Brave");
+        await context.dependencyManager.purge(["brave-browser", "brave-keyring"], task);
+
+        task.continue("Remove Brave sources");
+        const exec = util.promisify(childProcess.exec);
+
+        await exec(
+            `sudo rm -f ${keyringFilePath} ${sourceFilePath} ${configurationFilePath} /etc/apt/sources.list.d/brave-browser-*.list`,
+        );
+
+        task.continue("Remove user data");
+        const userDataPaths = [
+            path.join(context.directories.home, ".config", "BraveSoftware"),
+            path.join(context.directories.home, ".cache", "BraveSoftware"),
+        ];
+
+        await Promise.all(userDataPaths.map((userDataPath) => fs.rm(userDataPath, { recursive: true, force: true })));
+
+        task.finish();
+    }
+
     private async configureAutomaticUpdates(context: InstallContext, task: Task): Promise<void> {
         const dependencies = ["unattended-upgrades"];
         const isInstalled = await context.dependencyManager.isInstalled(dependencies);
@@ -72,8 +104,6 @@ export class Browser implements Package {
             task.continue(`Installing dependencies: ${dependencies.join(", ")}`);
             await context.dependencyManager.install(dependencies, task);
         }
-
-        const configurationFilePath = path.join("/", "etc", "apt", "apt.conf.d", "51unattended-upgrades-brave");
 
         task.continue("Configure automatic updates");
         const exec = util.promisify(childProcess.exec);

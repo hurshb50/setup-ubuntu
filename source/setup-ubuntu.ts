@@ -4,10 +4,12 @@ import os from "os";
 import path from "path";
 import { name, version } from "../package.json";
 import { Logger } from "./modules/logger/logger";
+import type { InstallContext, LegacyPackage } from "./modules/package/package";
 import { selectPackages, type PackageOption } from "./modules/package-selection/package-selection";
 import { DependencyManager } from "./modules/dependency-manager/dependency-manager";
 import { AgentRules } from "./modules/agent-rules/agent-rules";
 import { AgentSkills } from "./modules/agent-skills/agent-skills";
+import { AptZoxide } from "./modules/apt-zoxide/apt-zoxide";
 import { AutoSuggestion } from "./modules/auto-suggestion/auto-suggestion";
 import { Browser } from "./modules/browser/browser";
 import { Clipboard } from "./modules/clipboard/clipboard";
@@ -16,6 +18,7 @@ import { CodeHost } from "./modules/code-host/code-host";
 import { ContainerEngine } from "./modules/container-engine/container-engine";
 import { Fonts } from "./modules/fonts/fonts";
 import { FuzzyFinder } from "./modules/fuzzy-finder/fuzzy-finder";
+import { GoogleChrome } from "./modules/google-chrome/google-chrome";
 import { PasswordManager } from "./modules/password-manager/password-manager";
 import { ShellConfiguration } from "./modules/shell-configuration/shell-configuration";
 import { SmartChangeDirectory } from "./modules/smart-change-directory/smart-change-directory";
@@ -47,31 +50,39 @@ program
             { label: "Wallpapers", implementation: new Wallpapers() },
         ];
 
-        const selectedPackages = await selectPackages(packages);
-        if (selectedPackages === undefined) return;
-        if (selectedPackages.length === 0) {
-            process.stdout.write("No components selected. Nothing to install.\n");
-            return;
-        }
+        const legacyPackages: LegacyPackage[] = [new GoogleChrome(), new AptZoxide()];
 
-        const logger = new Logger();
-        const dependencyManager = new DependencyManager();
-        await dependencyManager.authenticate();
-        logger.start();
-
-        try {
-            const directories = {
+        const context: InstallContext = {
+            dependencyManager: new DependencyManager(),
+            directories: {
                 current: import.meta.dirname,
                 assets: path.join(import.meta.dirname, "assets"),
                 home: os.homedir(),
-            };
+            },
+            logger: new Logger(),
+        };
 
-            const installations = selectedPackages.map((entry) =>
-                entry.install({ dependencyManager, directories, logger }),
-            );
-            await Promise.all(installations);
+        const selection = await selectPackages(packages, context);
+        if (selection === undefined) return;
+
+        const legacyInstalled = await Promise.all(legacyPackages.map((entry) => entry.isInstalled(context)));
+        const installedLegacyPackages = legacyPackages.filter((_, index) => legacyInstalled[index]);
+        const uninstallations = [...installedLegacyPackages, ...selection.uninstall];
+
+        if (uninstallations.length === 0 && selection.install.length === 0) {
+            process.stdout.write("No components selected. Nothing to do.\n");
+            return;
+        }
+
+        await context.dependencyManager.authenticate();
+        context.logger.start();
+
+        try {
+            // Removals run first so a removed tool cannot undo a fresh installation.
+            await Promise.all(uninstallations.map((entry) => entry.uninstall(context)));
+            await Promise.all(selection.install.map((entry) => entry.install(context)));
         } finally {
-            logger.stop();
+            context.logger.stop();
         }
     });
 

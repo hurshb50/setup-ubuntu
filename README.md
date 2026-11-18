@@ -15,15 +15,23 @@ Vite+ defaults to pnpm, which can hold back freshly published releases. The setu
 
 ## Choosing Components
 
-In an interactive terminal, choose which components to install. All components start selected.
+In an interactive terminal, choose what to do with each component. All components start set to install.
+
+- `[+]` installs or updates the component.
+- `[-]` removes the component and its user data. It only appears for installed components that support removal.
+- `[ ]` skips the component.
+
+To reinstall a component from scratch, run the tool once to remove it, then again to install it.
 
 - Use arrow keys to navigate.
-- Press Space to toggle selection.
-- Press A to select or clear all.
+- Press Space to change the action.
+- Press A to install or skip all.
 - Press Enter to continue.
 - Press Escape to cancel.
 
 Without an interactive terminal, all components install automatically.
+
+Tools from earlier releases, like Google Chrome and the apt version of zoxide, are removed automatically.
 
 ## After Installation
 
