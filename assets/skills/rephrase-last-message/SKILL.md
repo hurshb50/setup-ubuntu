@@ -5,11 +5,10 @@ description: Rephrase the last agent message without changing its meaning.
 
 # Rephrase Last Message
 
-Rephrase the last agent message.
+I don't understand your last message. You assumed too much about what I know. Now I'm confused. Rephrase it.
 
 ## The rephrasing
 
-- Assume no prior knowledge
 - Define technical terms before using them
 - Keep the original meaning and facts
 - Keep necessary caveats and code references
